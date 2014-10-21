@@ -22,7 +22,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
         public bool CheckPreCondition(string statement)
         {
-            return (statement.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase)) > 0;
+            return (statement.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase)) >= 0;
         }
 
         public ICodeDocumentElement Parse(string text, int lineNumber)
