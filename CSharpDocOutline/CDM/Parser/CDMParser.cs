@@ -25,6 +25,13 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         private ICodeDocumentElement _lastParsedElement;
         private uint _openBrackets;
 
+        public void Init()
+        {
+            _cdm = null;
+            _currentParent = null;
+            _lastParsedElement = null;
+        }
+
         public void Parse(StreamReader reader, ref CodeDocumentModel cdm)
         {
             _cdm = cdm;
@@ -82,7 +89,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         private void ParseElement(string statement, int lineNumber)
         {
             // Skip comment lines
-            statement.Trim();
+            statement = statement.Trim(new Char[]{' ', '\t'});
             if (statement.StartsWith("//"))
                 return;
             // TODO: correlty find multi-line comments "/* ... */"
