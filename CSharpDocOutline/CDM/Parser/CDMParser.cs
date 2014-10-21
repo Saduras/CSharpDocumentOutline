@@ -104,16 +104,6 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                     break;
                 }
             }
-            
-            //if (text.IndexOf("struct", StringComparison.CurrentCultureIgnoreCase) > 0)
-            //{
-            //    //ParseStruct(text, lineNumber);
-            //}
-
-            //if (text.IndexOf("interface", StringComparison.CurrentCultureIgnoreCase) > 0)
-            //{
-            //    //ParseInterface(text, lineNumber);
-            //}
 
             //if(text.IndexOf("#region", StringComparison.CurrentCultureIgnoreCase) > 0)
             //{
