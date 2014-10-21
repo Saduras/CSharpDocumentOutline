@@ -44,7 +44,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             string[] statements;
 
             // TODO: For now assume, we have only one element per line - handle multiple elements per line later
-            while ((indexOpenBracket = line.IndexOf("{")) > 0)
+            while ((indexOpenBracket = line.IndexOf("{")) >= 0)
             {
                 // Get string string until bracket found.
                 // This string includes one or more statements but no {
