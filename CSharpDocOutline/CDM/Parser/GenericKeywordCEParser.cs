@@ -43,10 +43,11 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 accessModifier = accessModifier.Split(new Char[] { ' ' })[0];
 
                 // Get string for type/name of class
-                int typeEndIndex = statement.IndexOf(" ", indexOfClass + 6);
-                if (typeEndIndex < 0)
-                    typeEndIndex = statement.Length;
-                string name = statement.Substring(indexOfClass + 6, typeEndIndex - (indexOfClass + 6));
+                int nameStartIndex = indexOfClass + Keyword.Length + 1;
+                int nameEndIndex = statement.IndexOf(" ", nameStartIndex);
+                if (nameEndIndex < 0)
+                    nameEndIndex = statement.Length;
+                string name = statement.Substring(nameStartIndex, nameEndIndex - (nameStartIndex));
 
                 var cde = GetInstanceOfElement();
                 cde.ElementName = name;
