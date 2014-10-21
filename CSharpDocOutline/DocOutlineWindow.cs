@@ -90,6 +90,7 @@ namespace DavidSpeck.CSharpDocOutline
                 var cdm = new CodeDocumentModel();
                 cdm.DocumentName = doc.Name;
                 cdm.FullPath = doc.Path;
+                _parser.Init();
                 _parser.Parse(reader, ref cdm);
                 
                 _docOutline.OutlineDocument(cdm);
