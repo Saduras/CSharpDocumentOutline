@@ -7,10 +7,18 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
-    public abstract class BaseKeywordCEParser : ICEParser
+    public class GenericKeywordCEParser : ICEParser
     {
-        protected abstract string Keyword { get; }
-        protected abstract ICodeDocumentElement GetInstanceOfElement();
+        string Keyword { get; set; }
+        CEKind Kind { get; set; }
+        bool CanHaveMember { get; set; }
+
+        public GenericKeywordCEParser(string keyword, CEKind kind, bool canHaveMember)
+        {
+            Keyword = keyword;
+            Kind = kind;
+            CanHaveMember = canHaveMember;
+        }
 
         public bool CheckPreCondition(string statement)
         {
@@ -31,7 +39,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             try
             {
                 // Get string for access modifier
-                string accessModifier = statement.Substring(0, indexOfClass);
+                string accessModifier = statement.Substring(0, indexOfClass).Trim();
                 accessModifier = accessModifier.Split(new Char[] { ' ' })[0];
 
                 // Get string for type/name of class
@@ -58,7 +66,11 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
                 throw;
             }
+        }
 
+        protected ICodeDocumentElement GetInstanceOfElement()
+        {
+            return new GenericCodeElement(Kind, CanHaveMember);
         }
     }
 }

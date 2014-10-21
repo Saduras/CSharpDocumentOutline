@@ -10,7 +10,14 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 {
     class CDMParser
     {
-        private ICEParser[] _elementParser = new ICEParser[] { new CEClassParser() };
+        private ICEParser[] _elementParser = new ICEParser[] 
+        { 
+            new GenericKeywordCEParser("namespace", CEKind.Namespace, false),
+            new GenericKeywordCEParser("class", CEKind.Class, true),
+            new GenericKeywordCEParser("struct", CEKind.Struct, true),
+            new GenericKeywordCEParser("interface", CEKind.Interface, true),
+            new GenericKeywordCEParser("enum", CEKind.Enum, false),
+        };
 
         private CodeDocumentModel _cdm;
 
