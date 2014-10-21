@@ -62,7 +62,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 if (preBracket.IndexOf("}") > 0 && _currentParent != null)
                     _currentParent = _currentParent.Parent;
 
-                statements = preBracket.Split(new Char[]{';'});
+                statements = preBracket.Split(new Char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var element in statements)
                 {
                     ParseElement(element, lineNumber);
@@ -79,7 +79,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             if (line.IndexOf("}") > 0 && _currentParent != null)
                 _currentParent = _currentParent.Parent;
 
-            statements = line.Split(new Char[] { ';' });
+            statements = line.Split(new Char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var element in statements)
             {
                 ParseElement(element, lineNumber);

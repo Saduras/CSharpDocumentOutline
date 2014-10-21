@@ -42,7 +42,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             {
                 // Get string for access modifier
                 string accessModifier = statement.Substring(0, indexOfClass).Trim();
-                accessModifier = accessModifier.Split(new Char[] { ' ' })[0];
+                accessModifier = accessModifier.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0];
 
                 // Get string for type/name of class
                 int nameStartIndex = indexOfClass + Keyword.Length;
