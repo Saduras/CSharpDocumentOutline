@@ -47,6 +47,13 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         private void ParseLine(string line, int lineNumber)
         {
             Debug.WriteLine("Parsing line " + lineNumber);
+
+            // Skip comment lines
+            line = line.Trim(new Char[] { ' ', '\t' });
+            if (line.StartsWith("//"))
+                return;
+            // TODO: correlty find multi-line comments "/* ... */"
+
             int indexOpenBracket = -1;
             string[] statements;
 
@@ -88,12 +95,6 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
         private void ParseElement(string statement, int lineNumber)
         {
-            // Skip comment lines
-            statement = statement.Trim(new Char[]{' ', '\t'});
-            if (statement.StartsWith("//"))
-                return;
-            // TODO: correlty find multi-line comments "/* ... */"
-
             ICodeDocumentElement element = null;
 
             foreach (var parser in _elementParser)
