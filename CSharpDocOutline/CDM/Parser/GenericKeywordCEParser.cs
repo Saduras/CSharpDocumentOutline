@@ -15,7 +15,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
         public GenericKeywordCEParser(string keyword, CEKind kind, bool canHaveMember)
         {
-            Keyword = keyword;
+            // C# keywords require a space behind the keyword. 
+            // Add this to the requirement reduce miss-interpretation rate.
+            Keyword = keyword + " ";
             Kind = kind;
             CanHaveMember = canHaveMember;
         }
@@ -43,7 +45,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 accessModifier = accessModifier.Split(new Char[] { ' ' })[0];
 
                 // Get string for type/name of class
-                int nameStartIndex = indexOfClass + Keyword.Length + 1;
+                int nameStartIndex = indexOfClass + Keyword.Length;
                 int nameEndIndex = statement.IndexOf(" ", nameStartIndex);
                 if (nameEndIndex < 0)
                     nameEndIndex = statement.Length;
