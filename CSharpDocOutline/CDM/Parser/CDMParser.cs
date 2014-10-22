@@ -38,7 +38,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             _cdm = cdm;
 
             string line;
-            int lineNumber = 0;
+            int lineNumber = 1;
             while ((line = reader.ReadLine()) != null)
             {
                 ParseLine(line, lineNumber++);
