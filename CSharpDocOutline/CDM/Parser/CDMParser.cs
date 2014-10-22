@@ -18,6 +18,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             new GenericKeywordCEParser("interface", CEKind.Interface, canHaveMember:true, hasType:true),
             new GenericKeywordCEParser("enum", CEKind.Enum, canHaveMember:false, hasType:true),
             new CEFunctionParser(),
+            new CEFieldParser(),
         };
 
         private CodeDocumentModel _cdm;
@@ -53,11 +54,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             line = line.Trim(new Char[] { ' ', '\t' });
             if (line.StartsWith("//"))
                 return;
-            // TODO: correlty find multi-line comments "/* ... */"
+            // TODO: correctly find multi-line comments "/* ... */"
 
             int indexOpenBracket = -1;
-            string[] statements;
-
             while ((indexOpenBracket = line.IndexOf("{")) >= 0)
             {
                 // Get string string until bracket found.
@@ -69,11 +68,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 if (preBracket.IndexOf("}") > 0 && _currentParent != null)
                     _currentParent = _currentParent.Parent;
 
-                statements = preBracket.Split(new Char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var element in statements)
-                {
-                    ParseElement(element, lineNumber);
-                }
+                ParseSemicolonSeperatedElements(line, lineNumber);
 
                 // The last parsed element is related to the found bracket.
                 // Use this as new parent element.
@@ -82,15 +77,13 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
             // string line does not contain any more opening brackets.
 
+            // TODO: check for multiple closing brackets
             // Update parent if closing bracket is found.
             if (line.IndexOf("}") >= 0 && _currentParent != null)
                 _currentParent = _currentParent.Parent;
 
-            statements = line.Split(new Char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var element in statements)
-            {
-                ParseElement(element, lineNumber);
-            }
+            // Check for simicolons even if there are no opening brackets
+            ParseSemicolonSeperatedElements(line, lineNumber);
         }
 
         private void ParseElement(string statement, int lineNumber)
@@ -124,7 +117,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             //    // TODO: Check for methods
             //}
 
-            
+
 
             // This statement does not contain any outline element
             if (element == null)
@@ -146,6 +139,21 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 _currentParent.Children.Add(element);
                 element.Parent = _currentParent;
             }
+        }
+
+        private void ParseSemicolonSeperatedElements(string statements, int lineNumber)
+        {
+            int indexOfSemicolon = -1;
+            while ((indexOfSemicolon = statements.IndexOf(";")) >= 0)
+            {
+                // Make sure to keep the semicolon on the statement if there is any
+                string statement = statements.Substring(0, indexOfSemicolon + 1);
+                statements = statements.Remove(0, statement.Length);
+                ParseElement(statement, lineNumber);
+            }
+
+            // Parse the rest behind the las semiconlons
+            ParseElement(statements, lineNumber);
         }
     }
 }

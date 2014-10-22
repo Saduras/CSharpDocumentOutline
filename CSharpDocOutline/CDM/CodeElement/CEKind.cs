@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
-    // CodeElementType
+    // CodeElementKind
     public enum CEKind
     {
         Namespace,
@@ -14,7 +14,8 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         Struct,
         Interface,
         Function,
-        Member,
+        Field,
+        Property,
         Event,
         Delegate,
         Region
