@@ -16,7 +16,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
         CEAccessModifier AccessModifier { get; set; }
         CEKind Kind { get; }
-        // Type Type { get; }
+        string ElementType { get; set; }
         string ElementName { get; set; }
 
         string ToString(int depth);

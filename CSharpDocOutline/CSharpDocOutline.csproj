@@ -131,11 +131,13 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CDM\CodeElement\CEFunction.cs" />
     <Compile Include="CDM\CodeElement\GenericCodeElement.cs" />
     <Compile Include="CDM\Parser\CDMParser.cs" />
     <Compile Include="CDM\CodeElement\ICodeDocumentElement.cs" />
-    <Compile Include="CDM\CodeElement\CEType.cs" />
+    <Compile Include="CDM\CodeElement\CEKind.cs" />
     <Compile Include="CDM\CodeElement\CEAccessModifier.cs" />
+    <Compile Include="CDM\Parser\CEFunctionParser.cs" />
     <Compile Include="CDM\Parser\GenericKeywordCEParser.cs" />
     <Compile Include="CDM\Parser\ICEParser.cs" />
     <Compile Include="DocOutlineView.xaml.cs">

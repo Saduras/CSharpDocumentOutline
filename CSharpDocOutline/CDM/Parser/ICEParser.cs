@@ -10,6 +10,5 @@ namespace DavidSpeck.CSharpDocOutline.CDM
     {
         bool CheckPreCondition(string statement);
         ICodeDocumentElement Parse(string statement, int lineNumber);
-        ICodeDocumentElement Parse(string statement, int lineNumber, int startIndex);
     }
 }

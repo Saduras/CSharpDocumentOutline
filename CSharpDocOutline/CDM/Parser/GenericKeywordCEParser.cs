@@ -12,14 +12,16 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         string Keyword { get; set; }
         CEKind Kind { get; set; }
         bool CanHaveMember { get; set; }
+        bool HasType { get; set; }
 
-        public GenericKeywordCEParser(string keyword, CEKind kind, bool canHaveMember)
+        public GenericKeywordCEParser(string keyword, CEKind kind, bool canHaveMember, bool hasType)
         {
             // C# keywords require a space behind the keyword. 
             // Add this to the requirement reduce miss-interpretation rate.
             Keyword = keyword + " ";
             Kind = kind;
             CanHaveMember = canHaveMember;
+            HasType = hasType;
         }
 
         public bool CheckPreCondition(string statement)
@@ -29,31 +31,37 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
         public ICodeDocumentElement Parse(string text, int lineNumber)
         {
-            int indexOfClass = text.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase);
-            return this.Parse(text, lineNumber, indexOfClass);
+            int indexOfKeyword = text.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase);
+            return this.Parse(text, lineNumber, indexOfKeyword);
         }
 
-        public ICodeDocumentElement Parse(string statement, int lineNumber, int indexOfClass)
+        public ICodeDocumentElement Parse(string statement, int lineNumber, int indexOfKeyword)
         {
-            if (indexOfClass < 0)
+            if (indexOfKeyword < 0)
                 return null;
 
             try
             {
                 // Get string for access modifier
-                string accessModifier = statement.Substring(0, indexOfClass).Trim();
+                string accessModifier = statement.Substring(0, indexOfKeyword).Trim();
                 var split = accessModifier.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 accessModifier = (split.Length > 0) ? split[0] : "";
 
-                // Get string for type/name of class
-                int nameStartIndex = indexOfClass + Keyword.Length;
+                // Get string for type/name of element
+                int nameStartIndex = indexOfKeyword + Keyword.Length;
                 int nameEndIndex = statement.IndexOf(" ", nameStartIndex);
                 if (nameEndIndex < 0)
                     nameEndIndex = statement.Length;
                 string name = statement.Substring(nameStartIndex, nameEndIndex - (nameStartIndex));
 
+                
                 var cde = GetInstanceOfElement();
                 cde.ElementName = name;
+                // This parser is used for namespace, class, struct, interface, enum.
+                // Their type is equal their name (class, struct, interface, enum) or they don't have one (namespace)
+                if(HasType)
+                    cde.ElementType = name;
+
                 cde.LineNumber = lineNumber;
                 cde.AccessModifier = CEAccessModifierHelper.Parse(accessModifier, CEAccessModifier.Internal);
                 // TODO: change default to private if this is a subclass

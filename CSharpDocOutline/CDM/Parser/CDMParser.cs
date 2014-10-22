@@ -12,11 +12,12 @@ namespace DavidSpeck.CSharpDocOutline.CDM
     {
         private ICEParser[] _elementParser = new ICEParser[] 
         { 
-            new GenericKeywordCEParser("namespace", CEKind.Namespace, false),
-            new GenericKeywordCEParser("class", CEKind.Class, true),
-            new GenericKeywordCEParser("struct", CEKind.Struct, true),
-            new GenericKeywordCEParser("interface", CEKind.Interface, true),
-            new GenericKeywordCEParser("enum", CEKind.Enum, false),
+            new GenericKeywordCEParser("namespace", CEKind.Namespace, canHaveMember:false, hasType:false),
+            new GenericKeywordCEParser("class", CEKind.Class, canHaveMember:true, hasType:true),
+            new GenericKeywordCEParser("struct", CEKind.Struct, canHaveMember:true, hasType:true),
+            new GenericKeywordCEParser("interface", CEKind.Interface, canHaveMember:true, hasType:true),
+            new GenericKeywordCEParser("enum", CEKind.Enum, canHaveMember:false, hasType:true),
+            new CEFunctionParser(),
         };
 
         private CodeDocumentModel _cdm;
@@ -57,7 +58,6 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             int indexOpenBracket = -1;
             string[] statements;
 
-            // TODO: For now assume, we have only one element per line - handle multiple elements per line later
             while ((indexOpenBracket = line.IndexOf("{")) >= 0)
             {
                 // Get string string until bracket found.
@@ -83,7 +83,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             // string line does not contain any more opening brackets.
 
             // Update parent if closing bracket is found.
-            if (line.IndexOf("}") > 0 && _currentParent != null)
+            if (line.IndexOf("}") >= 0 && _currentParent != null)
                 _currentParent = _currentParent.Parent;
 
             statements = line.Split(new Char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
