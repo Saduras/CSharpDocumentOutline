@@ -10,6 +10,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
     public class GenericKeywordCEParser : ICEParser
     {
         string Keyword { get; set; }
+        string StartKeyword { get; set; }
         CEKind Kind { get; set; }
         bool CanHaveMember { get; set; }
         bool HasType { get; set; }
@@ -18,7 +19,8 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         {
             // C# keywords require a space behind the keyword. 
             // Add this to the requirement reduce miss-interpretation rate.
-            Keyword = keyword + " ";
+            Keyword = " " + keyword + " ";
+            StartKeyword = keyword + " ";
             Kind = kind;
             CanHaveMember = canHaveMember;
             HasType = hasType;
@@ -26,13 +28,18 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
         public bool CheckPreCondition(string statement)
         {
-            return (statement.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase)) >= 0;
+            // Search for keyword surrounded by spaces or at the beginning of the statements
+            return (statement.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase)) >= 0
+                || (statement.IndexOf(StartKeyword, StringComparison.CurrentCultureIgnoreCase)) == 0;
         }
 
-        public ICodeDocumentElement Parse(string text, int lineNumber)
+        public ICodeDocumentElement Parse(string statement, int lineNumber)
         {
-            int indexOfKeyword = text.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase);
-            return this.Parse(text, lineNumber, indexOfKeyword);
+            int indexOfKeyword = statement.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase);
+            if (indexOfKeyword < 0 && statement.IndexOf(StartKeyword, StringComparison.CurrentCultureIgnoreCase) == 0)
+                indexOfKeyword = 0;
+
+            return this.Parse(statement, lineNumber, indexOfKeyword);
         }
 
         public ICodeDocumentElement Parse(string statement, int lineNumber, int indexOfKeyword)
