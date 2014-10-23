@@ -36,11 +36,15 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 		private ICodeDocumentElement m_lastParsedElement;
 		public ICodeDocumentElement LastParsedElement { get { return m_lastParsedElement; } }
 
+		private int m_openBrackets = 0;
+
 		public void Init()
 		{
 			m_cdm = null;
 			m_currentParent = null;
 			m_lastParsedElement = null;
+
+			m_openBrackets = 0;
 		}
 
 		public void Parse(StreamReader reader, ref CodeDocumentModel cdm)
@@ -73,26 +77,32 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 				string preBracket = line.Substring(0, indexOpenBracket);
 				line = line.Remove(0, indexOpenBracket + 1);
 
-				// Update parent if closing bracket is found.
-				if (preBracket.IndexOf("}") > 0 && m_currentParent != null)
-					m_currentParent = m_currentParent.Parent;
+				CheckForClosingBrackets(preBracket);
 
 				ParseSemicolonSeperatedElements(preBracket, lineNumber);
 
 				// The last parsed element is related to the found bracket.
 				// Use this as new parent element.
-				m_currentParent = m_lastParsedElement;
+				if (m_currentParent != m_lastParsedElement)
+				{
+					m_currentParent = m_lastParsedElement;
+					m_openBrackets = 1;
+				}
+				else
+				{
+					m_openBrackets++;
+				}
+					
 			}
-
 			// string line does not contain any more opening brackets.
-
-			// Update parent if closing bracket is found.
-			while (line.IndexOf("}") >= 0 && m_currentParent != null)
-				m_currentParent = m_currentParent.Parent;
+			
+			CheckForClosingBrackets(line);
 
 			// Check for simicolons even if there are no opening brackets
 			ParseSemicolonSeperatedElements(line, lineNumber);
 		}
+
+		
 
 		private void ParseElement(string statement, int lineNumber)
 		{
@@ -153,5 +163,24 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			// Parse the rest behind the las semiconlons
 			ParseElement(statements, lineNumber);
 		}
+
+		private void CheckForClosingBrackets(string statement)
+		{
+			string tmpString = (string) statement.Clone();
+			int indexOfClosingBracket = -1;
+			while ( (indexOfClosingBracket = tmpString.IndexOf("}")) >= 0 && m_currentParent != null)
+			{
+				tmpString = tmpString.Substring(indexOfClosingBracket + 1);
+				if (m_openBrackets > 1)
+				{
+					m_openBrackets--;
+				}
+				else
+				{
+					m_currentParent = m_currentParent.Parent;
+				}
+			}
+		}
+
 	}
 }
