@@ -88,7 +88,7 @@ namespace DavidSpeck.CSharpDocOutline
             {
                 var doc = GotFocus.Document;
 				// Cancle re-parsing if the document hasn't changed
-				if (_docOutline.CurrentDocument != null && doc.FullName != _docOutline.CurrentDocument.FullName)
+				if (_docOutline.CurrentDocument != null && doc.FullName == _docOutline.CurrentDocument.FullName)
 					return;
 
                 var reader = new StreamReader(doc.Path + doc.Name);

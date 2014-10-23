@@ -11,22 +11,14 @@ namespace DavidSpeck.CSharpDocOutline
 {
 	public class CETreeViewItem : TreeViewItem
 	{
-		private ICodeDocumentElement m_cdElement;
+		public ICodeDocumentElement CDElement { get; private set; }
 		private DocOutlineView m_docOutlineView;
 
 		public CETreeViewItem(DocOutlineView docOutlineView, ICodeDocumentElement element)
 			: base()
 		{
 			m_docOutlineView = docOutlineView;
-			m_cdElement = element;
-		}
-
-		protected override void OnMouseDoubleClick(System.Windows.Input.MouseButtonEventArgs e)
-		{
-			base.OnMouseDoubleClick(e);
-
-			if((e.OriginalSource as TextBlock).Text == this.Header)
-				m_docOutlineView.MoveToLineAndOffSetInDocument(m_cdElement.LineNumber, 1);
+			CDElement = element;
 		}
 	}
 }

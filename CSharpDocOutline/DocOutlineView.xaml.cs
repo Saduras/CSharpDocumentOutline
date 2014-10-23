@@ -71,6 +71,7 @@ namespace DavidSpeck.CSharpDocOutline
 			item.Header = element.ToString();
 			parent.Items.Add(item);
 			item.IsExpanded = true;
+			item.MouseDoubleClick += OnMouseDoubleClick;
 
 			foreach (var child in element.Children) 
 			{
@@ -78,8 +79,17 @@ namespace DavidSpeck.CSharpDocOutline
 			}
 		}
 
-		public void MoveToLineAndOffSetInDocument(int line, int offset)
+		private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
+			var item = (CETreeViewItem) sender;
+
+			if (!(e.OriginalSource is TextBlock) 
+				&& (string) item.Header != ((TextBlock) e.OriginalSource).Text)
+				return;
+
+			int line = item.CDElement.LineNumber;
+			int offset = 1;
+
 			CurrentDocument.Activate();
 
 			var selection = (EnvDTE.TextSelection) CurrentDocument.Selection;
