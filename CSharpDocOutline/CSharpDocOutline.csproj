@@ -133,14 +133,17 @@
   <ItemGroup>
     <Compile Include="CDM\CodeElement\CEFunction.cs" />
     <Compile Include="CDM\CodeElement\GenericCodeElement.cs" />
+    <Compile Include="CDM\Parser\Blacklist\BRIgnoreKeyword.cs" />
+    <Compile Include="CDM\Parser\Blacklist\BRSkipLinesInsideFunctions.cs" />
+    <Compile Include="CDM\Parser\Blacklist\IBlacklistRule.cs" />
     <Compile Include="CDM\Parser\CDMParser.cs" />
     <Compile Include="CDM\CodeElement\ICodeDocumentElement.cs" />
     <Compile Include="CDM\CodeElement\CEKind.cs" />
     <Compile Include="CDM\CodeElement\CEAccessModifier.cs" />
-    <Compile Include="CDM\Parser\CEFunctionParser.cs" />
-    <Compile Include="CDM\Parser\CEFieldParser.cs" />
-    <Compile Include="CDM\Parser\GenericKeywordCEParser.cs" />
-    <Compile Include="CDM\Parser\ICEParser.cs" />
+    <Compile Include="CDM\Parser\Whitelist\CEFunctionParser.cs" />
+    <Compile Include="CDM\Parser\Whitelist\CEFieldParser.cs" />
+    <Compile Include="CDM\Parser\Whitelist\GenericKeywordCEParser.cs" />
+    <Compile Include="CDM\Parser\Whitelist\ICEParser.cs" />
     <Compile Include="DocOutlineView.xaml.cs">
       <DependentUpon>DocOutlineView.xaml</DependentUpon>
     </Compile>

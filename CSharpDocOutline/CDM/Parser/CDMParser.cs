@@ -8,9 +8,14 @@ using System.Diagnostics;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
-    class CDMParser
+    public class CDMParser
     {
-        private ICEParser[] _elementParser = new ICEParser[] 
+        private IBlacklistRule[] m_blacklist = new IBlacklistRule[] {
+            new BRSkipLinesInsideFunctions(),
+            new BRIgnoreKeyword("using"),
+        };
+
+        private ICEParser[] m_elementParser = new ICEParser[] 
         { 
             new GenericKeywordCEParser("namespace", CEKind.Namespace, canHaveMember:false, hasType:false),
             new GenericKeywordCEParser("class", CEKind.Class, canHaveMember:true, hasType:true),
@@ -21,22 +26,24 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             new CEFieldParser(),
         };
 
-        private CodeDocumentModel _cdm;
+        private CodeDocumentModel m_cdm;
 
-        private ICodeDocumentElement _currentParent;
-        private ICodeDocumentElement _lastParsedElement;
-        private uint _openBrackets;
+        private ICodeDocumentElement m_currentParent;
+        public ICodeDocumentElement CurrentParent { get { return m_currentParent; } }
+
+        private ICodeDocumentElement m_lastParsedElement;
+        public ICodeDocumentElement LastParsedElement { get { return m_lastParsedElement; } }
 
         public void Init()
         {
-            _cdm = null;
-            _currentParent = null;
-            _lastParsedElement = null;
+            m_cdm = null;
+            m_currentParent = null;
+            m_lastParsedElement = null;
         }
 
         public void Parse(StreamReader reader, ref CodeDocumentModel cdm)
         {
-            _cdm = cdm;
+            m_cdm = cdm;
 
             string line;
             int lineNumber = 1;
@@ -65,22 +72,22 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 line = line.Remove(0, indexOpenBracket + 1);
 
                 // Update parent if closing bracket is found.
-                if (preBracket.IndexOf("}") > 0 && _currentParent != null)
-                    _currentParent = _currentParent.Parent;
+                if (preBracket.IndexOf("}") > 0 && m_currentParent != null)
+                    m_currentParent = m_currentParent.Parent;
 
                 ParseSemicolonSeperatedElements(line, lineNumber);
 
                 // The last parsed element is related to the found bracket.
                 // Use this as new parent element.
-                _currentParent = _lastParsedElement;
+                m_currentParent = m_lastParsedElement;
             }
 
             // string line does not contain any more opening brackets.
 
             // TODO: check for multiple closing brackets
             // Update parent if closing bracket is found.
-            if (line.IndexOf("}") >= 0 && _currentParent != null)
-                _currentParent = _currentParent.Parent;
+            if (line.IndexOf("}") >= 0 && m_currentParent != null)
+                m_currentParent = m_currentParent.Parent;
 
             // Check for simicolons even if there are no opening brackets
             ParseSemicolonSeperatedElements(line, lineNumber);
@@ -90,7 +97,17 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         {
             ICodeDocumentElement element = null;
 
-            foreach (var parser in _elementParser)
+            // Check blacklist rules. If a rule applies, don't parse this statement
+            foreach (var blackRule in m_blacklist)
+            {
+                if (blackRule.CheckCondition(this, statement))
+                {
+                    return;
+                }
+            }
+
+            // Check element parser and use the first one which applies
+            foreach (var parser in m_elementParser)
             {
                 if (parser.CheckPreCondition(statement))
                 {
@@ -99,45 +116,25 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 }
             }
 
-            //if(text.IndexOf("#region", StringComparison.CurrentCultureIgnoreCase) > 0)
-            //{
-            //    //ParseRegion(text, lineNumber);
-            //}
-
-            //// The following elements require certain parents to be valid.
-            //// Required parents are: class, interface, struct
-            //if (_currentParent != null && !_currentParent.CanHaveMember)
-            //{
-            //    if (text.IndexOf("event", StringComparison.CurrentCultureIgnoreCase) > 0)
-            //    {
-            //        //PraseEvent(text, lineNumber);
-            //    }
-
-            //    // TODO: Check for fields
-            //    // TODO: Check for methods
-            //}
-
-
-
             // This statement does not contain any outline element
             if (element == null)
                 return;
 
             AddToCDM(element);
-            _lastParsedElement = element;
+            m_lastParsedElement = element;
         }
 
         private void AddToCDM(ICodeDocumentElement element)
         {
             Debug.WriteLine("Add " + element.Kind + " to CDM");
-            if (_currentParent == null)
+            if (m_currentParent == null)
             {
-                _cdm.RootElements.Add(element);
+                m_cdm.RootElements.Add(element);
             }
             else
             {
-                _currentParent.Children.Add(element);
-                element.Parent = _currentParent;
+                m_currentParent.Children.Add(element);
+                element.Parent = m_currentParent;
             }
         }
 
