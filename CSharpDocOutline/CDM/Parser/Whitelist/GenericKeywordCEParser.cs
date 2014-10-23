@@ -9,21 +9,28 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 {
     public class GenericKeywordCEParser : ICEParser
     {
+        public enum HandleType
+        {
+            NoType,
+            TypeEqualName,
+            ParseType
+        }
+
         string Keyword { get; set; }
         string StartKeyword { get; set; }
         CEKind Kind { get; set; }
         bool CanHaveMember { get; set; }
-        bool HasType { get; set; }
+        HandleType HowHandleType { get; set; }
 
-        public GenericKeywordCEParser(string keyword, CEKind kind, bool canHaveMember, bool hasType)
+        public GenericKeywordCEParser(string keyword, CEKind kind, HandleType howHandleType, bool canHaveMember)
         {
             // C# keywords require a space behind the keyword. 
             // Add this to the requirement reduce miss-interpretation rate.
-            Keyword = " " + keyword + " ";
-            StartKeyword = keyword + " ";
+            Keyword = " " + keyword.Trim() + " ";
+            StartKeyword = keyword.Trim() + " ";
             Kind = kind;
             CanHaveMember = canHaveMember;
-            HasType = hasType;
+            HowHandleType = howHandleType;
         }
 
         public bool CheckPreCondition(string statement)
@@ -49,25 +56,51 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
             try
             {
+				if (Keyword == "event")
+				{
+					var a =1;
+				}
+
                 // Get string for access modifier
                 string accessModifier = statement.Substring(0, indexOfKeyword).Trim();
                 var split = accessModifier.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 accessModifier = (split.Length > 0) ? split[0] : "";
 
                 // Get string for type/name of element
-                int nameStartIndex = indexOfKeyword + Keyword.Length;
-                int nameEndIndex = statement.IndexOf(" ", nameStartIndex);
-                if (nameEndIndex < 0)
-                    nameEndIndex = statement.Length;
-                string name = statement.Substring(nameStartIndex, nameEndIndex - (nameStartIndex));
+				int definitionsStartIndex = indexOfKeyword + Keyword.Length;
+				string definitionString = statement.Substring(definitionsStartIndex);
 
+				// If there is a '=' ignore everthing behind this char 
+				// (the default value doesn't matter for the outlining)
+				int index = -1;
+				if ((index = statement.IndexOf('=')) >= 0)
+					definitionString = statement.Substring(0, index);
+
+				string[] definitions = definitionString.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+				
+
+                var cde = new GenericCodeElement(Kind, CanHaveMember);
                 
-                var cde = GetInstanceOfElement();
-                cde.ElementName = name;
-                // This parser is used for namespace, class, struct, interface, enum.
-                // Their type is equal their name (class, struct, interface, enum) or they don't have one (namespace)
-                if(HasType)
-                    cde.ElementType = name;
+                
+                switch (HowHandleType)
+                {
+                    // e.g. namespace does not have any type, so leave the type empty
+                    case HandleType.NoType:
+                        cde.ElementName = definitions[0];
+                        cde.ElementType = "";
+                        break;
+                    // For enum, class, struct and interface the type is equal their name
+                    case HandleType.TypeEqualName:
+                        cde.ElementName = definitions[0];
+                        cde.ElementType = definitions[0];
+                        break;
+                    // If the type is different from the name, the type comes first
+                    case HandleType.ParseType:
+                        cde.ElementName = definitions[1];
+                        cde.ElementType = definitions[0];
+                        break;
+                }
 
                 cde.LineNumber = lineNumber;
                 cde.AccessModifier = CEAccessModifierHelper.Parse(accessModifier, CEAccessModifier.Internal);
@@ -79,17 +112,12 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             {
                 if (e is ArgumentOutOfRangeException || e is ArgumentNullException)
                 {
-                    Debug.WriteLine("Parsing statement as " +  Keyword + " failed. Statement: " + statement);
+                    Debug.WriteLine("Parsing statement as " +  Keyword.Trim() + " failed. Statement: " + statement);
                     return null;
                 }
 
                 throw;
             }
-        }
-
-        protected ICodeDocumentElement GetInstanceOfElement()
-        {
-            return new GenericCodeElement(Kind, CanHaveMember);
         }
     }
 }
