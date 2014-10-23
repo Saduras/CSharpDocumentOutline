@@ -17,13 +17,13 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 		private ICEParser[] m_elementParser = new ICEParser[]
         { 
-            new GenericKeywordCEParser("namespace",     CEKind.Namespace,   GenericKeywordCEParser.HandleType.NoType,           canHaveMember:false),
-            new GenericKeywordCEParser("class",         CEKind.Class,       GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true),
-            new GenericKeywordCEParser("struct",        CEKind.Struct,      GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true),
-            new GenericKeywordCEParser("interface",     CEKind.Interface,   GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true),
-            new GenericKeywordCEParser("enum",          CEKind.Enum,        GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:false),
-            new GenericKeywordCEParser("event",         CEKind.Event,       GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false),
-            new GenericKeywordCEParser("delegate",      CEKind.Delegate,    GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false),
+            new GenericKeywordCEParser("namespace",     CEKind.Namespace,   GenericKeywordCEParser.HandleType.NoType,           canHaveMember:false,	hasParameter:false),
+            new GenericKeywordCEParser("class",         CEKind.Class,       GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
+            new GenericKeywordCEParser("struct",        CEKind.Struct,      GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
+            new GenericKeywordCEParser("interface",     CEKind.Interface,   GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
+            new GenericKeywordCEParser("enum",          CEKind.Enum,        GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:false,	hasParameter:false),
+            new GenericKeywordCEParser("event",         CEKind.Event,       GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:false),
+            new GenericKeywordCEParser("delegate",      CEKind.Delegate,    GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:true),
             new CEFunctionParser(),
             new CEFieldParser(),
         };

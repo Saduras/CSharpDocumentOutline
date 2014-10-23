@@ -12,18 +12,18 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         public List<ICodeDocumentElement> Children { get; private set; }
 
         public int LineNumber { get; set; }
-        public bool CanHaveMember { get; private set; }
+        public bool CanHaveMember { get; set; }
 
         public CEAccessModifier AccessModifier { get; set; }
-        public CEKind Kind { get; private set; }
+        public CEKind Kind { get; set; }
         public string ElementType { get; set; }
         public string ElementName { get; set;}
+		public List<CEParameter> Parameters { get; private set; }
 
-        public GenericCodeElement(CEKind kind, bool canHaveMember)
+        public GenericCodeElement()
         {
             Children = new List<ICodeDocumentElement>();
-            Kind = kind;
-            CanHaveMember = canHaveMember;
+			Parameters = new List<CEParameter>();
         }
 
         public string ToString(int depth)
@@ -34,7 +34,19 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 tabs += "\t";
             }
 
-            string result = LineNumber.ToString() + ": " + tabs + AccessModifier + " " + Kind + " " + ElementName + "\n";
+            string result = LineNumber.ToString() + ": " + tabs + AccessModifier + " " + Kind + " " + ElementName;
+			if (Parameters.Count > 0)
+			{
+				result += "(";
+				for (int i = 0; i < Parameters.Count; i++)
+				{
+					result += Parameters[i].Type + " " + Parameters[i].Name;
+					if (i < Parameters.Count - 1)
+						result += ", ";
+				}
+				result += ")";
+			}
+			result += "\n";
             foreach (var child in Children)
             {
                 result += child.ToString(depth + 1);

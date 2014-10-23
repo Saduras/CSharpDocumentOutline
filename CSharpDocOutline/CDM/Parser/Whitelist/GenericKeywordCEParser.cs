@@ -19,10 +19,11 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         string Keyword { get; set; }
         string StartKeyword { get; set; }
         CEKind Kind { get; set; }
-        bool CanHaveMember { get; set; }
         HandleType HowHandleType { get; set; }
+		bool CanHaveMember { get; set; }
+		bool HasParameter { get; set; }
 
-        public GenericKeywordCEParser(string keyword, CEKind kind, HandleType howHandleType, bool canHaveMember)
+        public GenericKeywordCEParser(string keyword, CEKind kind, HandleType howHandleType, bool canHaveMember, bool hasParameter)
         {
             // C# keywords require a space behind the keyword. 
             // Add this to the requirement reduce miss-interpretation rate.
@@ -31,6 +32,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             Kind = kind;
             CanHaveMember = canHaveMember;
             HowHandleType = howHandleType;
+			HasParameter = hasParameter;
         }
 
         public bool CheckPreCondition(string statement)
@@ -56,33 +58,40 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
             try
             {
-				if (Keyword == "event")
-				{
-					var a =1;
-				}
+				statement.Trim();
 
                 // Get string for access modifier
                 string accessModifier = statement.Substring(0, indexOfKeyword).Trim();
                 var split = accessModifier.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 accessModifier = (split.Length > 0) ? split[0] : "";
 
+				string definitionString = (string) statement.Clone();
+
+				// If there is a '(' ignore everthing behund this char
+				// for the defintion parsing
+				int bracketStart = -1;
+				if (HasParameter)
+				{
+					if ((bracketStart = statement.IndexOf('(')) >= 0)
+						definitionString = definitionString.Substring(0, bracketStart);
+				}
+
                 // Get string for type/name of element
-				int definitionsStartIndex = indexOfKeyword + Keyword.Length;
-				string definitionString = statement.Substring(definitionsStartIndex);
+				int definitionsStartIndex = indexOfKeyword + Keyword.Length - 1;
+				definitionString = definitionString.Substring(definitionsStartIndex);
+
 
 				// If there is a '=' ignore everthing behind this char 
 				// (the default value doesn't matter for the outlining)
 				int index = -1;
-				if ((index = statement.IndexOf('=')) >= 0)
-					definitionString = statement.Substring(0, index);
+				if ((index = definitionString.IndexOf('=')) >= 0)
+					definitionString = definitionString.Substring(0, index);
 
 				string[] definitions = definitionString.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-				
-
-                var cde = new GenericCodeElement(Kind, CanHaveMember);
-                
-                
+                var cde = new GenericCodeElement();
+				cde.Kind = Kind;
+				cde.CanHaveMember = CanHaveMember;
                 switch (HowHandleType)
                 {
                     // e.g. namespace does not have any type, so leave the type empty
@@ -102,6 +111,14 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                         break;
                 }
 
+				
+				if (bracketStart > 0)
+				{
+					int bracketEnd = statement.IndexOf(')');
+					string parameterString = statement.Substring(bracketStart + 1, bracketEnd - bracketStart - 1);
+					ParseParameters(parameterString, ref cde);
+				}
+
                 cde.LineNumber = lineNumber;
                 cde.AccessModifier = CEAccessModifierHelper.Parse(accessModifier, CEAccessModifier.Internal);
                 // TODO: change default to private if this is a subclass
@@ -119,5 +136,18 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 throw;
             }
         }
+
+		public void ParseParameters(string paramString, ref GenericCodeElement cde)
+		{
+			string[] parameters = paramString.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			foreach (var param in parameters)
+			{
+				// Each function parameter must have the form: [type] [name]
+				string[] paramDefinitions = param.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				string paramType = paramDefinitions[0];
+				string paramName = paramDefinitions[1];
+				cde.Parameters.Add(new CEParameter(paramType, paramName));
+			}
+		}
     }
 }

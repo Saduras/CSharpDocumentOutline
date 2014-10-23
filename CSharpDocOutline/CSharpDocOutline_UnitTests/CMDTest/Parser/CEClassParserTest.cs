@@ -18,7 +18,7 @@ namespace CSharpDocOutline_UnitTests.CMDTest.Parser
             // Test-Case: proper class definition
             var classString = "public class MyClass {";
 
-            var parser = new GenericKeywordCEParser("class", CEKind.Class, true, true);
+            var parser = new GenericKeywordCEParser("class", CEKind.Class, GenericKeywordCEParser.HandleType.TypeEqualName, true, false);
             var result = parser.Parse(classString, 100);
 
             Assert.AreEqual(CEAccessModifier.Public, result.AccessModifier);
@@ -29,7 +29,7 @@ namespace CSharpDocOutline_UnitTests.CMDTest.Parser
             // Test-Case: class without access modifier
             classString = "class MyClass {";
 
-            parser = new GenericKeywordCEParser("class", CEKind.Class, true, true);
+			parser = new GenericKeywordCEParser("class", CEKind.Class, GenericKeywordCEParser.HandleType.TypeEqualName, true, false);
             result = parser.Parse(classString, 100);
 
             Assert.AreEqual(CEAccessModifier.Internal, result.AccessModifier);
@@ -40,7 +40,7 @@ namespace CSharpDocOutline_UnitTests.CMDTest.Parser
             // Test-Case: invalid statement
             classString = "var myVariable = 100f;";
 
-            parser = new GenericKeywordCEParser("class", CEKind.Class, true, true);
+			parser = new GenericKeywordCEParser("class", CEKind.Class, GenericKeywordCEParser.HandleType.TypeEqualName, true, false);
             result = parser.Parse(classString, 100);
 
             Assert.AreEqual(null, result);

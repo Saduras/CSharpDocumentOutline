@@ -70,7 +70,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 string[] paramDefinitions = param.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                 string paramType = paramDefinitions[0];
                 string paramName = paramDefinitions[1];
-                ceFunction.Parameters.Add(new CEFunction.Parameter(paramType, paramName));
+                ceFunction.Parameters.Add(new CEParameter(paramType, paramName));
             }
         }
     }

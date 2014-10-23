@@ -8,18 +8,6 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 {
     public class CEFunction : ICodeDocumentElement
     {
-        public class Parameter
-        {
-            public string Type { get; set; }
-            public string Name { get; set; }
-
-            public Parameter(string type, string name)
-            {
-                Type = type;
-                Name = name;
-            }
-        }
-
         public ICodeDocumentElement Parent { get; set; }
         public List<ICodeDocumentElement> Children { get; private set; }
 
@@ -30,12 +18,12 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         public CEKind Kind { get { return CEKind.Function; } }
         public string ElementName { get; set; }
         public string ElementType { get; set; }
-        public List<Parameter> Parameters { get; private set; }
+        public List<CEParameter> Parameters { get; private set; }
 
         public CEFunction() 
         {
             Children = new List<ICodeDocumentElement>();
-            Parameters = new List<Parameter>();
+            Parameters = new List<CEParameter>();
         }
 
         public string ToString(int depth)
