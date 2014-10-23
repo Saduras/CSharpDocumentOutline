@@ -24,8 +24,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             new GenericKeywordCEParser("enum",          CEKind.Enum,        GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:false,	hasParameter:false),
             new GenericKeywordCEParser("event",         CEKind.Event,       GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:false),
             new GenericKeywordCEParser("delegate",      CEKind.Delegate,    GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:true),
-            new CEFunctionParser(),
+			new CERegionParser(),
             new CEFieldParser(),
+			new CEFunctionParser(),
 			new CEPropertyParser(),
         };
 
@@ -109,6 +110,13 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 		{
 			ICodeDocumentElement element = null;
 
+			if (statement.Trim().StartsWith("#endregion") && m_currentParent.Kind == CEKind.Region)
+			{
+				// Close #region
+				m_currentParent = m_currentParent.Parent;
+			}
+
+
 			// Check blacklist rules. If a rule applies, don't parse this statement
 			foreach (var blackRule in m_blacklist)
 			{
@@ -134,6 +142,11 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 			AddToCDM(element);
 			m_lastParsedElement = element;
+
+			if (element.Kind == CEKind.Region)
+			{
+				m_currentParent = m_lastParsedElement;
+			}
 		}
 
 		private void AddToCDM(ICodeDocumentElement element)
