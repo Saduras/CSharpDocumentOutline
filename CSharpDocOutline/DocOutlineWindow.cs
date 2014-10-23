@@ -28,7 +28,7 @@ namespace DavidSpeck.CSharpDocOutline
     public class DocumentOutlineWindow : ToolWindowPane
     {
         CDMParser _parser = new CDMParser();
-        DocOutlineView _docOutline;
+		DocOutlineView _docOutline;
 
         /// <summary>
         /// Standard constructor for the tool window.
@@ -69,6 +69,7 @@ namespace DavidSpeck.CSharpDocOutline
         private void ConnectEvents()
         {
             DTE2 dte = GetService(typeof(DTE)) as DTE2;
+			_docOutline.Init(dte);
             dte.Events.WindowEvents.WindowActivated += new _dispWindowEvents_WindowActivatedEventHandler(OnWindowActivated);
         }
 
@@ -86,6 +87,10 @@ namespace DavidSpeck.CSharpDocOutline
             if (GotFocus.Document != null)
             {
                 var doc = GotFocus.Document;
+				// Cancle re-parsing if the document hasn't changed
+				if (_docOutline.CurrentDocument != null && doc.FullName != _docOutline.CurrentDocument.FullName)
+					return;
+
                 var reader = new StreamReader(doc.Path + doc.Name);
                 var cdm = new CodeDocumentModel();
                 cdm.DocumentName = doc.Name;
@@ -93,7 +98,7 @@ namespace DavidSpeck.CSharpDocOutline
                 _parser.Init();
                 _parser.Parse(reader, ref cdm);
                 
-                _docOutline.OutlineDocument(cdm);
+                _docOutline.OutlineDocument(cdm, doc);
             }
                 
         }

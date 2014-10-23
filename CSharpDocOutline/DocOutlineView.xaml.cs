@@ -1,5 +1,6 @@
 ﻿using DavidSpeck.CSharpDocOutline.CDM;
 using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
@@ -24,11 +25,19 @@ namespace DavidSpeck.CSharpDocOutline
     public partial class DocOutlineView : UserControl
     {
 
+		public DTE2 DTE { get; private set; }
+		public Document CurrentDocument { get; private set; }
+
         public DocOutlineView()
         {
             InitializeComponent();
             
         }
+
+		public void Init(DTE2 dte)
+		{
+			DTE = dte;
+		}
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")]
         private void button1_Click(object sender, RoutedEventArgs e)
@@ -38,9 +47,43 @@ namespace DavidSpeck.CSharpDocOutline
             Debug.WriteLine("The buttons was clicked");
         }
 
-        public void OutlineDocument(CodeDocumentModel cdm)
+        public void OutlineDocument(CodeDocumentModel cdm, Document doc)
         {
-            this.content.Text = cdm.ToString();
+			CurrentDocument = doc;
+
+			// Remove old tree
+			outlineTreeView.Items.Clear();
+
+			var rootItem = new TreeViewItem();
+			rootItem.Header = cdm.DocumentName;
+			rootItem.IsExpanded = true;
+			outlineTreeView.Items.Add(rootItem);
+
+			foreach (var element in cdm.RootElements)
+			{
+				AddCodeElementToTreeViewRecursively(element, rootItem);
+			}
         }
+
+		public void AddCodeElementToTreeViewRecursively(ICodeDocumentElement element, TreeViewItem parent)
+		{
+			var item = new CETreeViewItem(this, element);
+			item.Header = element.ToString();
+			parent.Items.Add(item);
+			item.IsExpanded = true;
+
+			foreach (var child in element.Children) 
+			{
+				AddCodeElementToTreeViewRecursively(child, item);
+			}
+		}
+
+		public void MoveToLineAndOffSetInDocument(int line, int offset)
+		{
+			CurrentDocument.Activate();
+
+			var selection = (EnvDTE.TextSelection) CurrentDocument.Selection;
+			selection.MoveToLineAndOffset(line, offset);
+		}
     }
 }

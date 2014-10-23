@@ -146,6 +146,7 @@
     <Compile Include="CDM\Parser\Whitelist\CERegionParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\GenericKeywordCEParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\ICEParser.cs" />
+    <Compile Include="CETreeViewItem.cs" />
     <Compile Include="DocOutlineView.xaml.cs">
       <DependentUpon>DocOutlineView.xaml</DependentUpon>
     </Compile>

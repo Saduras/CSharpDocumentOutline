@@ -13,7 +13,6 @@
             <TextBlock Margin="10" HorizontalAlignment="Center" Name="title">Document Outline CSharp</TextBlock>
             <TreeView Name="outlineTreeView">
             </TreeView>
-            <TextBlock Name="content">Test text</TextBlock>
         </StackPanel>
     </Grid>
 </UserControl>
