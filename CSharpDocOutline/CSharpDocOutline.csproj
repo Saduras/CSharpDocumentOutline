@@ -142,6 +142,7 @@
     <Compile Include="CDM\CodeElement\CEAccessModifier.cs" />
     <Compile Include="CDM\Parser\Whitelist\CEFunctionParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\CEFieldParser.cs" />
+    <Compile Include="CDM\Parser\Whitelist\CEPropertyParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\GenericKeywordCEParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\ICEParser.cs" />
     <Compile Include="DocOutlineView.xaml.cs">

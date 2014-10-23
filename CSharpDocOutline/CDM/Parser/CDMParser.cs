@@ -26,6 +26,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             new GenericKeywordCEParser("delegate",      CEKind.Delegate,    GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:true),
             new CEFunctionParser(),
             new CEFieldParser(),
+			new CEPropertyParser(),
         };
 
 		private CodeDocumentModel m_cdm;

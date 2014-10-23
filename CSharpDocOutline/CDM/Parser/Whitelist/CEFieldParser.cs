@@ -53,7 +53,6 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
                 throw;
             }
-            
         }
     }
 }
