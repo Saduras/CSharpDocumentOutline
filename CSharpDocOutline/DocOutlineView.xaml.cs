@@ -83,8 +83,9 @@ namespace DavidSpeck.CSharpDocOutline
 		{
 			var item = (CETreeViewItem) sender;
 
+			// Handle only on source TreeViewItem
 			if (!(e.OriginalSource is TextBlock) 
-				&& (string) item.Header != ((TextBlock) e.OriginalSource).Text)
+				|| (string) item.Header != ((TextBlock) e.OriginalSource).Text)
 				return;
 
 			int line = item.CDElement.LineNumber;
@@ -94,6 +95,9 @@ namespace DavidSpeck.CSharpDocOutline
 
 			var selection = (EnvDTE.TextSelection) CurrentDocument.Selection;
 			selection.MoveToLineAndOffset(line, offset);
+
+			// Prevent further handling
+			e.Handled = true;
 		}
     }
 }
