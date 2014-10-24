@@ -11,8 +11,8 @@
     <Grid>
         <StackPanel Orientation="Vertical">
             <TextBlock Margin="10" HorizontalAlignment="Center" Name="title">Document Outline CSharp</TextBlock>
-            <TreeView Name="outlineTreeView">
-            </TreeView>
-        </StackPanel>
+			<TreeView Name="outlineTreeView">
+			</TreeView>
+		</StackPanel>
     </Grid>
 </UserControl>
