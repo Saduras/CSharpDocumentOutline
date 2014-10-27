@@ -10,11 +10,14 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 {
 	public class CDMParser
 	{
+		#region Blacklist
 		private IBlacklistRule[] m_blacklist = new IBlacklistRule[] {
             new BRSkipLinesInsideFunctions(),
             new BRIgnoreKeyword("using"),
         };
+		#endregion
 
+		#region Element parser
 		private ICEParser[] m_elementParser = new ICEParser[]
         { 
             new GenericKeywordCEParser("namespace",     CEKind.Namespace,   GenericKeywordCEParser.HandleType.NoType,           canHaveMember:false,	hasParameter:false),
@@ -30,6 +33,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			new CEFunctionParser(),
 			new CEPropertyParser(),
         };
+		#endregion
 
 		private CodeDocumentModel m_cdm;
 
@@ -40,6 +44,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 		public ICodeDocumentElement LastParsedElement { get { return m_lastParsedElement; } }
 
 		private int m_openBrackets = 0;
+		private bool m_multiLineComment = false;
 
 		public void Init()
 		{
@@ -48,6 +53,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			m_lastParsedElement = null;
 
 			m_openBrackets = 0;
+			m_multiLineComment = false;
 		}
 
 		public void Parse(StreamReader reader, ref CodeDocumentModel cdm)
@@ -66,14 +72,34 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 		{
 			Debug.WriteLine("Parsing line " + lineNumber);
 
-			// Skip comment lines
 			line = line.Trim(new Char[] { ' ', '\t' });
+
+			// Handle comments
+			// Skip comment lines
 			if (line.StartsWith("//"))
 				return;
-			// TODO: correctly find multi-line comments "/* ... */"
+
+			// Find mutli line comments
+			if (line.StartsWith("/*"))
+				m_multiLineComment = true;
+
+			int indexOfCommentEnd = -1;
+			if ((indexOfCommentEnd = line.IndexOf("*/")) >= 0)
+			{
+				// Crop of comment area and close multi line comment flag
+				line = line.Substring(indexOfCommentEnd + 2);
+				m_multiLineComment = false;
+			}
+
+			if (m_multiLineComment)
+				return;
+
+			// Now parse the line until the next '{' and ';'
+			// Save line length
+			int length = line.Length;
 
 			int indexOpenBracket = -1;
-			while ((indexOpenBracket = line.IndexOf("{")) >= 0)
+			if ((indexOpenBracket = line.IndexOf("{")) >= 0)
 			{
 				// Get string string until bracket found.
 				// This string includes one or more statements but no {
@@ -82,7 +108,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 				CheckForClosingBrackets(preBracket);
 
-				ParseSemicolonSeperatedElements(preBracket, lineNumber);
+				line = ParseSemicolonSeperatedElements(preBracket, lineNumber);
 
 				// The last parsed element is related to the found bracket.
 				// Use this as new parent element.
@@ -95,14 +121,32 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 				{
 					m_openBrackets++;
 				}
-					
-			}
-			// string line does not contain any more opening brackets.
-			
-			CheckForClosingBrackets(line);
 
-			// Check for simicolons even if there are no opening brackets
-			ParseSemicolonSeperatedElements(line, lineNumber);
+			}
+			else
+			{
+				// string line does not contain any more opening brackets.
+				CheckForClosingBrackets(line);
+
+				// Check for simicolons even if there are no opening brackets
+				line = ParseSemicolonSeperatedElements(line, lineNumber);
+			}
+			
+			if (line.Length > 0)
+			{
+				if (line.Length == length)
+				{
+					// Line length hasn't changed, i.e.:
+					// No more statement delimiter left, assume the rest of the line is one last statement
+					ParseElement(line, lineNumber);
+				}
+				else
+				{
+					// Look again for delimiter and comment on the rest of the line
+					ParseLine(line, lineNumber);
+				}
+			}
+				
 		}
 
 		
@@ -164,10 +208,10 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			}
 		}
 
-		private void ParseSemicolonSeperatedElements(string statements, int lineNumber)
+		private string ParseSemicolonSeperatedElements(string statements, int lineNumber)
 		{
 			int indexOfSemicolon = -1;
-			while ((indexOfSemicolon = statements.IndexOf(";")) >= 0)
+			if ((indexOfSemicolon = statements.IndexOf(";")) >= 0)
 			{
 				// Make sure to keep the semicolon on the statement if there is any
 				string statement = statements.Substring(0, indexOfSemicolon + 1);
@@ -175,8 +219,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 				ParseElement(statement, lineNumber);
 			}
 
-			// Parse the rest behind the las semiconlons
-			ParseElement(statements, lineNumber);
+			return statements;
 		}
 
 		private void CheckForClosingBrackets(string statement)
