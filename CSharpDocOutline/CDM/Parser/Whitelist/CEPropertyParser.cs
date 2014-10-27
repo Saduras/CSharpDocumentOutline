@@ -9,7 +9,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 {
 	public class CEPropertyParser : ICEParser
 	{
-		public bool CheckPreCondition(string statement)
+		public bool CheckPreCondition(string statement, CDMParser parser)
 		{
 			// Properties don't have a secure sign in the same line
 			// The '{' might be in the next line

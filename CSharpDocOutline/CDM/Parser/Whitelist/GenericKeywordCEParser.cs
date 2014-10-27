@@ -35,7 +35,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			HasParameter = hasParameter;
         }
 
-        public bool CheckPreCondition(string statement)
+        public bool CheckPreCondition(string statement, CDMParser parser)
         {
             // Search for keyword surrounded by spaces or at the beginning of the statements
             return (statement.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase)) >= 0

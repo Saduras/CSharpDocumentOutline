@@ -19,6 +19,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         public string ElementName { get; set; }
         public string ElementType { get; set; }
         public List<CEParameter> Parameters { get; private set; }
+		public bool IsConstructor { get { return Parent.Kind == CEKind.Class && Parent.ElementName == this.ElementType; } }
 
         public CEFunction() 
         {

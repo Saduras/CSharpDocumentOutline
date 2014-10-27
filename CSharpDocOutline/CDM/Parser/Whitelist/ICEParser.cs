@@ -8,7 +8,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 {
     interface ICEParser
     {
-        bool CheckPreCondition(string statement);
+        bool CheckPreCondition(string statement, CDMParser parser);
         ICodeDocumentElement Parse(string statement, int lineNumber);
     }
 }

@@ -26,6 +26,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             new GenericKeywordCEParser("delegate",      CEKind.Delegate,    GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:true),
 			new CERegionParser(),
             new CEFieldParser(),
+			new CEConstructorParser(),
 			new CEFunctionParser(),
 			new CEPropertyParser(),
         };
@@ -129,7 +130,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			// Check element parser and use the first one which applies
 			foreach (var parser in m_elementParser)
 			{
-				if (parser.CheckPreCondition(statement))
+				if (parser.CheckPreCondition(statement, this))
 				{
 					element = parser.Parse(statement, lineNumber);
 					break;

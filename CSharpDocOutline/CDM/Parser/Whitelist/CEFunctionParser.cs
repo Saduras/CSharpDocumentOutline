@@ -9,7 +9,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 {
     public class CEFunctionParser : ICEParser
     {
-        public bool CheckPreCondition(string statement)
+        public bool CheckPreCondition(string statement, CDMParser parser)
         {
             return statement.IndexOf("(") > 0;
         }

@@ -9,7 +9,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 {
     public class CEFieldParser : ICEParser
     {
-        public bool CheckPreCondition(string statement)
+        public bool CheckPreCondition(string statement, CDMParser parser)
         {
             return !string.IsNullOrEmpty(statement) && statement.Last() == ';';
         }
