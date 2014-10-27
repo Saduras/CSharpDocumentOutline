@@ -14,8 +14,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			// Properties don't have a secure sign in the same line
 			// The '{' might be in the next line
 			// For now assume everything that wasn't parsed already might be a property
+			// A Property has atleast two words (type and name)
 			// TODO Improve property detection (statement detection?)
-			return !string.IsNullOrEmpty(statement);
+			return statement.Split(new Char[]{' '}).Length > 0;
 		}
 
 		public ICodeDocumentElement Parse(string statement, int lineNumber)
