@@ -27,7 +27,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                     definitionString = statement.Substring(0, statement.Length - 1);
 
                 // Type and Name are the last two words in the definitions string now
-                string[] definitions = definitionString.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				string[] definitions = ParserUtilities.GetWords(definitionString);
                 string name = definitions[definitions.Length - 1];
                 string type = definitions[definitions.Length - 2];
                 // Try to parse the additional access modifier if there are more than two words

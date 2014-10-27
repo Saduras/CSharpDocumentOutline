@@ -16,7 +16,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			// For now assume everything that wasn't parsed already might be a property
 			// A Property has atleast two words (type and name)
 			// TODO Improve property detection (statement detection?)
-			return statement.Split(new Char[]{' '}).Length > 0;
+			return ParserUtilities.GetWords(statement).Length > 0;
 		}
 
 		public ICodeDocumentElement Parse(string statement, int lineNumber)
@@ -32,7 +32,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 					definitionString = statement.Substring(0, statement.Length - 1);
 
 				// Type and Name are the last two words in the definitions string now
-				string[] definitions = definitionString.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				string[] definitions = ParserUtilities.GetWords(definitionString);
 				string name = definitions[definitions.Length - 1];
 				string type = definitions[definitions.Length - 2];
 				// Try to parse the additional access modifier if there are more than two words

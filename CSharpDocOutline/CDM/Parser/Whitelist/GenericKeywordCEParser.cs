@@ -62,7 +62,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
                 // Get string for access modifier
                 string accessModifier = statement.Substring(0, indexOfKeyword).Trim();
-                var split = accessModifier.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				var split = ParserUtilities.GetWords(accessModifier);
                 accessModifier = (split.Length > 0) ? split[0] : "";
 
 				string definitionString = (string) statement.Clone();
@@ -87,7 +87,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 				if ((index = definitionString.IndexOf('=')) >= 0)
 					definitionString = definitionString.Substring(0, index);
 
-				string[] definitions = definitionString.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				string[] definitions = ParserUtilities.GetWords(definitionString);
 
                 var cde = new GenericCodeElement();
 				cde.Kind = Kind;
@@ -139,11 +139,11 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 		public void ParseParameters(string paramString, ref GenericCodeElement cde)
 		{
-			string[] parameters = paramString.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+			string[] parameters = paramString.Split(new Char[]{','}, StringSplitOptions.RemoveEmptyEntries);
 			foreach (var param in parameters)
 			{
 				// Each function parameter must have the form: [type] [name]
-				string[] paramDefinitions = param.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				string[] paramDefinitions = ParserUtilities.GetWords(param);
 				string paramType = paramDefinitions[0];
 				string paramName = paramDefinitions[1];
 				cde.Parameters.Add(new CEParameter(paramType, paramName));

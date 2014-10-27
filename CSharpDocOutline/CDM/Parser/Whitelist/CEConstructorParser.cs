@@ -49,7 +49,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 		private void ParseDefinitons(string definitionString, ref CEFunction ceFunction)
 		{
-			string[] definitons = definitionString.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+			string[] definitons = ParserUtilities.GetWords(definitionString);
 			// The last word before the parameters is always the function name.
 			string name = definitons[definitons.Length - 1];
 			// Now check for optional definitions. 
@@ -68,7 +68,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			foreach (var param in parameters)
 			{
 				// Each function parameter must have the form: [type] [name]
-				string[] paramDefinitions = param.Split(new Char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+				string[] paramDefinitions = ParserUtilities.GetWords(param);
 				string paramType = paramDefinitions[0];
 				string paramName = paramDefinitions[1];
 				ceFunction.Parameters.Add(new CEParameter(paramType, paramName));

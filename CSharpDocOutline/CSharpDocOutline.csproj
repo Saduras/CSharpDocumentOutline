@@ -140,6 +140,7 @@
     <Compile Include="CDM\CodeElement\ICodeDocumentElement.cs" />
     <Compile Include="CDM\CodeElement\CEKind.cs" />
     <Compile Include="CDM\CodeElement\CEAccessModifier.cs" />
+    <Compile Include="CDM\Parser\ParserUtilities.cs" />
     <Compile Include="CDM\Parser\Whitelist\CEConstructorParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\CEFunctionParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\CEFieldParser.cs" />
