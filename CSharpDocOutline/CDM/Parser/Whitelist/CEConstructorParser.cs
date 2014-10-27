@@ -12,7 +12,8 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 		public bool CheckPreCondition(string statement, CDMParser parser)
 		{
 			var parent = parser.CurrentParent;
-			return parent.Kind == CEKind.Class
+			return parent != null
+				&& parent.Kind == CEKind.Class
 				&& statement.IndexOf(parent.ElementName, StringComparison.CurrentCultureIgnoreCase) > 0;
 		}
 
