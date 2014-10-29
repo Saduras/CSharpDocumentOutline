@@ -3,16 +3,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:shell="clr-namespace:Microsoft.VisualStudio.Shell;assembly=Microsoft.VisualStudio.Shell.12.0"
              Background="{DynamicResource VsBrush.Window}"
              Foreground="{DynamicResource VsBrush.WindowText}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
-    <Grid>
-        <StackPanel Orientation="Vertical">
-            <TextBlock Margin="10" HorizontalAlignment="Center" Name="title">Document Outline CSharp</TextBlock>
-			<TreeView Name="outlineTreeView">
+	<UserControl.Resources>
+		<Style x:Key="CETreeViewItem" TargetType="{x:Type TreeViewItem}">
+			<Style.Resources>
+				<SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.ToolWindowTextKey}}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.HighlightKey}}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.HighlightTextKey}}" />
+			</Style.Resources>
+		</Style>
+	</UserControl.Resources>
+	<Grid>
+		<StackPanel Orientation="Vertical">
+			<TreeView Name="outlineTreeView" 
+					  Background="{DynamicResource VsBrush.Window}"
+					  BorderThickness="0"
+					  ItemContainerStyle="{StaticResource CETreeViewItem}">
 			</TreeView>
 		</StackPanel>
-    </Grid>
+	</Grid>
 </UserControl>

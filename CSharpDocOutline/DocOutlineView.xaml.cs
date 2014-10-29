@@ -1,6 +1,7 @@
 ﻿using DavidSpeck.CSharpDocOutline.CDM;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,6 @@ namespace DavidSpeck.CSharpDocOutline
         public DocOutlineView()
         {
             InitializeComponent();
-            
         }
 
 		public void Init(DTE2 dte)
@@ -57,7 +57,7 @@ namespace DavidSpeck.CSharpDocOutline
 			outlineTreeView.Items.Clear();
 
 			// Build up new tree recursively
-			var rootItem = new TreeViewItem();
+			var rootItem = new CETreeViewItem(this, null);
 			rootItem.Header = cdm.DocumentName;
 			rootItem.IsExpanded = true;
 			rootItem.MouseDoubleClick += new MouseButtonEventHandler(OnRootElementMouseDoubleClick);

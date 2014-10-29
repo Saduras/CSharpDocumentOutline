@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace DavidSpeck.CSharpDocOutline
@@ -19,6 +20,8 @@ namespace DavidSpeck.CSharpDocOutline
 		{
 			m_docOutlineView = docOutlineView;
 			CDElement = element;
+
+			this.Style = (Style) docOutlineView.Resources["CETreeViewItem"];
 		}
 	}
 }
