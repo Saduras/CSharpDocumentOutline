@@ -17,7 +17,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 				&& statement.IndexOf(parent.ElementName, StringComparison.CurrentCultureIgnoreCase) > 0;
 		}
 
-		public ICodeDocumentElement Parse(string statement, int lineNumber)
+		public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
 		{
 			try
 			{

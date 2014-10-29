@@ -22,14 +22,16 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         HandleType HowHandleType { get; set; }
 		bool CanHaveMember { get; set; }
 		bool HasParameter { get; set; }
+		CEAccessModifier DefaultAccessModifier { get; set; }
 
-        public GenericKeywordCEParser(string keyword, CEKind kind, HandleType howHandleType, bool canHaveMember, bool hasParameter)
+        public GenericKeywordCEParser(string keyword, CEKind kind, CEAccessModifier defaultAccessModifier, HandleType howHandleType, bool canHaveMember, bool hasParameter)
         {
             // C# keywords require a space behind the keyword. 
             // Add this to the requirement reduce miss-interpretation rate.
             Keyword = " " + keyword.Trim() + " ";
             StartKeyword = keyword.Trim() + " ";
             Kind = kind;
+			DefaultAccessModifier = defaultAccessModifier;
             CanHaveMember = canHaveMember;
             HowHandleType = howHandleType;
 			HasParameter = hasParameter;
@@ -42,16 +44,16 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 || (statement.IndexOf(StartKeyword, StringComparison.CurrentCultureIgnoreCase)) == 0;
         }
 
-        public ICodeDocumentElement Parse(string statement, int lineNumber)
+        public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
         {
             int indexOfKeyword = statement.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase);
             if (indexOfKeyword < 0 && statement.IndexOf(StartKeyword, StringComparison.CurrentCultureIgnoreCase) == 0)
                 indexOfKeyword = 0;
 
-            return this.Parse(statement, lineNumber, indexOfKeyword);
+			return this.Parse(statement, lineNumber, indexOfKeyword, parentKind);
         }
 
-        public ICodeDocumentElement Parse(string statement, int lineNumber, int indexOfKeyword)
+		public ICodeDocumentElement Parse(string statement, int lineNumber, int indexOfKeyword, CEKind parentKind)
         {
             if (indexOfKeyword < 0)
                 return null;
@@ -120,8 +122,21 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 				}
 
                 cde.LineNumber = lineNumber;
-                cde.AccessModifier = CEAccessModifierHelper.Parse(accessModifier, CEAccessModifier.Internal);
-                // TODO: change default to private if this is a subclass
+				switch (parentKind)
+				{
+					case CEKind.Class:
+					case CEKind.Struct:
+						// Subclasses or substructs are private by default
+						cde.AccessModifier = CEAccessModifierHelper.Parse(accessModifier, CEAccessModifier.Private);
+						break;
+					case CEKind.Interface:
+						// Interface Member do not define access modifier
+						cde.AccessModifier = CEAccessModifier.None;
+						break;
+					default:
+						cde.AccessModifier = CEAccessModifierHelper.Parse(accessModifier, DefaultAccessModifier);
+						break;
+				}
 
                 return cde;
             }

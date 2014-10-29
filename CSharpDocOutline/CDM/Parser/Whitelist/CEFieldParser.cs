@@ -14,7 +14,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             return !string.IsNullOrEmpty(statement) && statement.Last() == ';';
         }
 
-        public ICodeDocumentElement Parse(string statement, int lineNumber)
+		public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 // Try to parse the additional access modifier if there are more than two words
                 CEAccessModifier accessModifier = CEAccessModifier.Internal;
                 if (definitions.Length > 0)
-                    accessModifier = CEAccessModifierHelper.Parse(definitions[0], CEAccessModifier.Internal);
+                    accessModifier = CEAccessModifierHelper.Parse(definitions[0], CEAccessModifier.Private);
 
                 GenericCodeElement field = new GenericCodeElement();
 				field.Kind = CEKind.Field;

@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
-    public class CEFunctionParser : ICEParser
+    public class CEMethodParser : ICEParser
     {
         public bool CheckPreCondition(string statement, CDMParser parser)
         {
             return statement.IndexOf("(") > 0;
         }
 
-        public ICodeDocumentElement Parse(string statement, int lineNumber)
+		public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
         {
             try
             {
@@ -54,7 +54,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             // Now check for optional definitions. 
             CEAccessModifier accessModifier = CEAccessModifier.Internal;
             if (definitons.Length > 2)
-                accessModifier = CEAccessModifierHelper.Parse(definitons[0], CEAccessModifier.Internal);
+                accessModifier = CEAccessModifierHelper.Parse(definitons[0], CEAccessModifier.Private);
 
             ceFunction.ElementName = name;
             ceFunction.ElementType = type;

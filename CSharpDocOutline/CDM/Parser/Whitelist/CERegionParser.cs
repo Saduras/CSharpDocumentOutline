@@ -14,7 +14,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			return statement.Trim().StartsWith("#region");
 		}
 
-		public ICodeDocumentElement Parse(string statement, int lineNumber)
+		public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
 		{
 			try
 			{

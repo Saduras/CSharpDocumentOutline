@@ -9,6 +9,6 @@ namespace DavidSpeck.CSharpDocOutline.CDM
     interface ICEParser
     {
         bool CheckPreCondition(string statement, CDMParser parser);
-        ICodeDocumentElement Parse(string statement, int lineNumber);
+        ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind);
     }
 }

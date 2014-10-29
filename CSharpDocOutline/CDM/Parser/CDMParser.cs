@@ -20,17 +20,17 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 		#region Element parser
 		private ICEParser[] m_elementParser = new ICEParser[]
         { 
-            new GenericKeywordCEParser("namespace",     CEKind.Namespace,   GenericKeywordCEParser.HandleType.NoType,           canHaveMember:false,	hasParameter:false),
-            new GenericKeywordCEParser("class",         CEKind.Class,       GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
-            new GenericKeywordCEParser("struct",        CEKind.Struct,      GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
-            new GenericKeywordCEParser("interface",     CEKind.Interface,   GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
-            new GenericKeywordCEParser("enum",          CEKind.Enum,        GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:false,	hasParameter:false),
-            new GenericKeywordCEParser("event",         CEKind.Event,       GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:false),
-            new GenericKeywordCEParser("delegate",      CEKind.Delegate,    GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:true),
+            new GenericKeywordCEParser("namespace",     CEKind.Namespace,	CEAccessModifier.None,		GenericKeywordCEParser.HandleType.NoType,           canHaveMember:false,	hasParameter:false),
+            new GenericKeywordCEParser("class",         CEKind.Class,		CEAccessModifier.Internal,  GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
+            new GenericKeywordCEParser("struct",        CEKind.Struct,      CEAccessModifier.Internal,	GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
+            new GenericKeywordCEParser("interface",     CEKind.Interface,   CEAccessModifier.Internal,	GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
+            new GenericKeywordCEParser("enum",          CEKind.Enum,        CEAccessModifier.Internal,	GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:false,	hasParameter:false),
+            new GenericKeywordCEParser("event",         CEKind.Event,       CEAccessModifier.Private,	GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:false),
+            new GenericKeywordCEParser("delegate",      CEKind.Delegate,    CEAccessModifier.Private,	GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:true),
 			new CERegionParser(),
             new CEFieldParser(),
 			new CEConstructorParser(),
-			new CEFunctionParser(),
+			new CEMethodParser(),
 			new CEPropertyParser(),
         };
 		#endregion
@@ -108,7 +108,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 				CheckForClosingBrackets(preBracket);
 
-				line = ParseSemicolonSeperatedElements(preBracket, lineNumber);
+				ParseSemicolonSeperatedElements(preBracket, lineNumber);
 
 				// The last parsed element is related to the found bracket.
 				// Use this as new parent element.
@@ -121,12 +121,18 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 				{
 					m_openBrackets++;
 				}
-
 			}
 			else
 			{
 				// string line does not contain any more opening brackets.
-				CheckForClosingBrackets(line);
+				string preSemicolon = line;
+				int indexOfSemicolon = -1;
+				if ((indexOfSemicolon = line.IndexOf(";")) >= 0)
+				{
+					preSemicolon = line.Substring(0, indexOfSemicolon + 1);
+				}
+
+				CheckForClosingBrackets(preSemicolon);
 
 				// Check for simicolons even if there are no opening brackets
 				line = ParseSemicolonSeperatedElements(line, lineNumber);
@@ -134,19 +140,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			
 			if (line.Length > 0)
 			{
-				if (line.Length == length)
-				{
-					// Line length hasn't changed, i.e.:
-					// No more statement delimiter left, assume the rest of the line is one last statement
-					ParseElement(line, lineNumber);
-				}
-				else
-				{
-					// Look again for delimiter and comment on the rest of the line
-					ParseLine(line, lineNumber);
-				}
+				// Look again for delimiter and comment on the rest of the line
+				ParseLine(line, lineNumber);
 			}
-				
 		}
 
 		
@@ -176,7 +172,8 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			{
 				if (parser.CheckPreCondition(statement, this))
 				{
-					element = parser.Parse(statement, lineNumber);
+					var parentKind = (CurrentParent != null) ? CurrentParent.Kind : CEKind.Namespace;
+					element = parser.Parse(statement, lineNumber, parentKind);
 					break;
 				}
 			}
@@ -210,14 +207,21 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 		private string ParseSemicolonSeperatedElements(string statements, int lineNumber)
 		{
+			string statement = statements;
+
 			int indexOfSemicolon = -1;
 			if ((indexOfSemicolon = statements.IndexOf(";")) >= 0)
 			{
 				// Make sure to keep the semicolon on the statement if there is any
-				string statement = statements.Substring(0, indexOfSemicolon + 1);
+				statement = statements.Substring(0, indexOfSemicolon + 1);
 				statements = statements.Remove(0, statement.Length);
-				ParseElement(statement, lineNumber);
 			}
+			else
+			{
+				// Everything was parsed of this element
+				statements = "";
+			}
+			ParseElement(statement, lineNumber);
 
 			return statements;
 		}
