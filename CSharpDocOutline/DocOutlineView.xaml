@@ -15,6 +15,8 @@
 				<SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.ToolWindowTextKey}}" />
 				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.HighlightKey}}" />
 				<SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.HighlightTextKey}}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.InactiveBorderKey}}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.HighlightTextKey}}" />
 			</Style.Resources>
 		</Style>
 	</UserControl.Resources>
