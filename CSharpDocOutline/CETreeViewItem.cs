@@ -13,15 +13,11 @@ namespace DavidSpeck.CSharpDocOutline
 	public class CETreeViewItem : TreeViewItem
 	{
 		public ICodeDocumentElement CDElement { get; private set; }
-		private DocOutlineView m_docOutlineView;
 
-		public CETreeViewItem(DocOutlineView docOutlineView, ICodeDocumentElement element)
+		public CETreeViewItem(ICodeDocumentElement element)
 			: base()
 		{
-			m_docOutlineView = docOutlineView;
 			CDElement = element;
-
-			this.Style = (Style) docOutlineView.Resources["CETreeViewItem"];
 		}
 	}
 }

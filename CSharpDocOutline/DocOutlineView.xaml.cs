@@ -1,6 +1,7 @@
 ﻿using DavidSpeck.CSharpDocOutline.CDM;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.VisualStudio.PlatformUI;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -13,6 +14,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
@@ -20,44 +22,29 @@ using System.Windows.Shapes;
 
 namespace DavidSpeck.CSharpDocOutline
 {
-    /// <summary>
-    /// Interaction logic for MyControl.xaml
-    /// </summary>
-    public partial class DocOutlineView : UserControl
-    {
-
-		public DTE2 DTE { get; private set; }
+	/// <summary>
+	/// Interaction logic for MyControl.xaml
+	/// </summary>
+	public partial class DocOutlineView : UserControl
+	{
 		public Document CurrentDocument { get; private set; }
 
 		private CETreeViewItem m_selected = null;
 
-        public DocOutlineView()
-        {
-            InitializeComponent();
-        }
-
-		public void Init(DTE2 dte)
+		public DocOutlineView()
 		{
-			DTE = dte;
+			InitializeComponent();
 		}
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions")]
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            //MessageBox.Show(string.Format(System.Globalization.CultureInfo.CurrentUICulture, "We are inside {0}.button1_Click()", this.ToString()),
-            //                "Document Outline CSharp");
-            Debug.WriteLine("The buttons was clicked");
-        }
-
-        public void OutlineDocument(CodeDocumentModel cdm, Document doc)
-        {
+		public void OutlineDocument(CodeDocumentModel cdm, Document doc)
+		{
 			CurrentDocument = doc;
 
 			// Remove old tree
 			outlineTreeView.Items.Clear();
 
 			// Build up new tree recursively
-			var rootItem = new CETreeViewItem(this, null);
+			var rootItem = new CETreeViewItem(null);
 			rootItem.Header = cdm.DocumentName;
 			rootItem.IsExpanded = true;
 			rootItem.MouseDoubleClick += new MouseButtonEventHandler(OnRootElementMouseDoubleClick);
@@ -67,23 +54,25 @@ namespace DavidSpeck.CSharpDocOutline
 			{
 				AddCodeElementToTreeViewRecursively(element, rootItem);
 			}
-        }
+		}
 
 		public void AddCodeElementToTreeViewRecursively(ICodeDocumentElement element, TreeViewItem parent)
 		{
-			var item = new CETreeViewItem(this, element);
+			var item = new CETreeViewItem(element);
 			item.Header = element.ToString();
 			parent.Items.Add(item);
 			item.IsExpanded = true;
+			item.Style = (Style) this.Resources["CETreeViewItem"];
 			item.MouseDoubleClick += new MouseButtonEventHandler(OnMouseDoubleClick);
 			item.Selected += new RoutedEventHandler(OnItemSelected);
 
-			foreach (var child in element.Children) 
+			foreach (var child in element.Children)
 			{
 				AddCodeElementToTreeViewRecursively(child, item);
 			}
 		}
 
+		#region Event handler
 		private void OnItemSelected(object sender, RoutedEventArgs e)
 		{
 			m_selected = (CETreeViewItem) sender;
@@ -120,9 +109,9 @@ namespace DavidSpeck.CSharpDocOutline
 				return;
 
 			// Handle only on source TreeViewItem
-			if (!(e.OriginalSource is TextBlock) 
-				|| (string) item.Header != ((TextBlock) e.OriginalSource).Text)
-				return;
+			//if (!(e.OriginalSource is TextBlock) 
+			//    || (string) item.Header != ((TextBlock) e.OriginalSource).Text)
+			//    return;
 
 			int line = item.CDElement.LineNumber;
 			int offset = 1;
@@ -145,5 +134,6 @@ namespace DavidSpeck.CSharpDocOutline
 			// Prevent further handling
 			e.Handled = true;
 		}
-    }
+		#endregion
+	}
 }

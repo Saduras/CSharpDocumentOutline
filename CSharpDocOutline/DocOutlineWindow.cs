@@ -59,9 +59,8 @@ namespace DavidSpeck.CSharpDocOutline
         protected override void Initialize()
         {
             base.Initialize();
-            DTE2 dte = GetService(typeof(DTE)) as DTE2;
-            _docOutline.Init(dte);
-            ConnectEvents(dte);
+            
+            ConnectEvents();
         }
 
         protected override void Dispose(bool disposing)
@@ -71,8 +70,10 @@ namespace DavidSpeck.CSharpDocOutline
         }
 
         #region Connect events
-        private void ConnectEvents(DTE2 dte)
+        private void ConnectEvents()
         {
+            DTE2 dte = GetService(typeof(DTE)) as DTE2;
+
             // Keeping this references is required to prevent these objects from
             // beeing garbage collected.
             _events = dte.Events;
