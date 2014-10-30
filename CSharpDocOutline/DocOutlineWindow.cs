@@ -30,6 +30,9 @@ namespace DavidSpeck.CSharpDocOutline
         CDMParser _parser = new CDMParser();
 		DocOutlineView _docOutline;
 
+        Events _events;
+        DocumentEvents _docEvents;
+
         /// <summary>
         /// Standard constructor for the tool window.
         /// </summary>
@@ -56,7 +59,9 @@ namespace DavidSpeck.CSharpDocOutline
         protected override void Initialize()
         {
             base.Initialize();
-            ConnectEvents();
+            DTE2 dte = GetService(typeof(DTE)) as DTE2;
+            _docOutline.Init(dte);
+            ConnectEvents(dte);
         }
 
         protected override void Dispose(bool disposing)
@@ -66,18 +71,29 @@ namespace DavidSpeck.CSharpDocOutline
         }
 
         #region Connect events
-        private void ConnectEvents()
+        private void ConnectEvents(DTE2 dte)
         {
-            DTE2 dte = GetService(typeof(DTE)) as DTE2;
-			_docOutline.Init(dte);
-            dte.Events.WindowEvents.WindowActivated += new _dispWindowEvents_WindowActivatedEventHandler(OnWindowActivated);
+            // Keeping this references is required to prevent these objects from
+            // beeing garbage collected.
+            _events = dte.Events;
+            _docEvents = _events.DocumentEvents;
+
+            _events.WindowEvents.WindowActivated += new _dispWindowEvents_WindowActivatedEventHandler(OnWindowActivated);
+            _docEvents.DocumentSaved += new _dispDocumentEvents_DocumentSavedEventHandler(OnDocumentSaved);
         }
+
+        
 
         private void DisconnectEvents()
         {
             DTE2 dte = GetService(typeof(DTE)) as DTE2;
-            if(dte != null)
+            if (dte != null)
+            {
                 dte.Events.WindowEvents.WindowActivated -= new _dispWindowEvents_WindowActivatedEventHandler(OnWindowActivated);
+                dte.Events.DocumentEvents.DocumentSaved -= new _dispDocumentEvents_DocumentSavedEventHandler(OnDocumentSaved);
+            }
+            _events = null;
+            _docEvents = null;
         }
         #endregion
 
@@ -91,17 +107,26 @@ namespace DavidSpeck.CSharpDocOutline
 				if (_docOutline.CurrentDocument != null && doc.FullName == _docOutline.CurrentDocument.FullName)
 					return;
 
-                var reader = new StreamReader(doc.Path + doc.Name);
-                var cdm = new CodeDocumentModel();
-                cdm.DocumentName = doc.Name;
-                cdm.FullPath = doc.Path;
-                _parser.Init();
-                _parser.Parse(reader, ref cdm);
-                
-                _docOutline.OutlineDocument(cdm, doc);
+                OutlineDocument(doc);
             }
-                
+        }
+
+        private void OnDocumentSaved(Document Document)
+        {
+            OutlineDocument(Document);
         }
         #endregion
+
+        private void OutlineDocument(Document document)
+        {
+            var reader = new StreamReader(document.Path + document.Name);
+            var cdm = new CodeDocumentModel();
+            cdm.DocumentName = document.Name;
+            cdm.FullPath = document.Path;
+            _parser.Init();
+            _parser.Parse(reader, ref cdm);
+
+            _docOutline.OutlineDocument(cdm, document);
+        }
     }
 }
