@@ -54,7 +54,8 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
         public override string ToString()
         {
-			string result = AccessModifier + " " + Kind + " " + ElementName;
+            string result = (AccessModifier != CEAccessModifier.None) ? AccessModifier + " " : "";
+            result += Kind + " " + ElementName;
 			result += "(";
 			for (int i = 0; i < Parameters.Count; i++)
 			{
