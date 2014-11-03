@@ -10,6 +10,38 @@
              d:DesignHeight="300" d:DesignWidth="300"
              Name="MyToolWindow">
 	<UserControl.Resources>
+		<Style TargetType="{x:Type ToggleButton}">
+			<Style.Resources>
+				<SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.ButtonTextKey}}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.HighlightKey}}" />
+				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.HighlightTextKey}}" />
+			</Style.Resources>
+			<Setter Property="Margin" Value="2"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type ToggleButton}">
+						<Border x:Name="bg" BorderThickness="2"
+								BorderBrush="{DynamicResource {x:Static shell:VsBrushes.CommandBarBorderKey}}"
+								Background="{DynamicResource {x:Static shell:VsBrushes.CommandBarBorderKey}}">
+							<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver" Value="True">
+								<Setter Property="Background"
+										Value="{DynamicResource {x:Static shell:VsBrushes.HighlightKey}}"
+										TargetName="bg" />
+							</Trigger>
+							<Trigger Property="IsChecked" Value="True">
+								<Setter Property="Background"
+										Value="{DynamicResource {x:Static shell:VsBrushes.HighlightKey}}"
+										TargetName="bg" />
+							</Trigger>
+						</ControlTemplate.Triggers>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
 		<Style x:Key="CETreeViewItem" TargetType="{x:Type TreeViewItem}">
 			<Style.Resources>
 				<SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.ToolWindowTextKey}}" />
@@ -18,8 +50,7 @@
 				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.InactiveBorderKey}}" />
 				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.HighlightTextKey}}" />
 			</Style.Resources>
-				<Setter Property="HorizontalContentAlignment"
-          Value="Left" />
+			<Setter Property="HorizontalContentAlignment" Value="Left" />
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="TreeViewItem">
@@ -174,6 +205,15 @@
 	</UserControl.Resources>
 	<Grid>
 		<StackPanel Orientation="Vertical">
+			<StackPanel Orientation="Horizontal" 
+						Background="{DynamicResource VsBrush.CommandBarBorderKey}">
+				<ToggleButton Name="sortByKindBtn">
+					Sort by kind
+				</ToggleButton>
+				<ToggleButton Name="sortByNameBtn">
+					Sort by name
+				</ToggleButton>
+			</StackPanel>
 			<TreeView Name="outlineTreeView" 
 					  Background="{DynamicResource VsBrush.Window}"
 					  BorderThickness="0"

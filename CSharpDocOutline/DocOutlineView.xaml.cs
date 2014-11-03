@@ -27,18 +27,101 @@ namespace DavidSpeck.CSharpDocOutline
 	/// </summary>
 	public partial class DocOutlineView : UserControl
 	{
+		public CodeDocumentModel CDM { get; private set; }
 		public Document CurrentDocument { get; private set; }
 
 		private CETreeViewItem m_selected = null;
 
+		bool m_sortByKind = false;
+		bool m_sortByName = false;
+
 		public DocOutlineView()
 		{
 			InitializeComponent();
+
+			sortByKindBtn.Click += new RoutedEventHandler((o, e) =>
+			{
+				m_sortByKind = !m_sortByKind;
+				OutlineDocument(CDM, CurrentDocument);
+			});
+			sortByNameBtn.Click += new RoutedEventHandler((o, e) =>
+			{
+				m_sortByName = !m_sortByName;
+				OutlineDocument(CDM, CurrentDocument);
+			});
 		}
+
+		#region Sort Hierarchie
+		public void Sort(CodeDocumentModel cdm)
+		{
+			if (cdm == null)
+				return;
+
+			SortList(cdm.RootElements);
+
+			foreach (var element in cdm.RootElements)
+			{
+				RecursivSort(element);
+			}
+		}
+
+		private void RecursivSort(ICodeDocumentElement element)
+		{
+			SortList(element.Children);
+
+			foreach (var children in element.Children)
+			{
+				RecursivSort(children);
+			}
+		}
+
+		private void SortList(List<ICodeDocumentElement> list)
+		{
+			// Sort by LineNumber
+			list.Sort((x, y) =>
+			{
+				if (x == null || y == null)
+					return 0;
+
+				return x.LineNumber.CompareTo(y.LineNumber);
+			});
+
+			if (m_sortByKind)
+			{
+				// Sort by Kind
+				list.Sort((x, y) =>
+				{
+					if (x == null || y == null)
+						return 0;
+
+					return x.Kind.CompareTo(y.Kind);
+				});
+			}
+
+			if (m_sortByName)
+			{
+				// Sort by Name
+				list.Sort((x, y) =>
+				{
+					if (x == null || y == null)
+						return 0;
+
+					return x.ElementName.CompareTo(y.ElementName);
+				});
+			}
+		}
+		#endregion
 
 		public void OutlineDocument(CodeDocumentModel cdm, Document doc)
 		{
+			if (cdm == null)
+				return;
+
+			CDM = cdm;
 			CurrentDocument = doc;
+
+			// Apply sorting
+			Sort(CDM);
 
 			// Remove old tree
 			outlineTreeView.Items.Clear();
