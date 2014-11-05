@@ -30,88 +30,51 @@ namespace DavidSpeck.CSharpDocOutline
 		public CodeDocumentModel CDM { get; private set; }
 		public Document CurrentDocument { get; private set; }
 
-		private CETreeViewItem m_selected = null;
+		CETreeViewItem m_selected = null;
 
-		bool m_sortByKind = false;
-		bool m_sortByName = false;
+		SortMode m_sortMode = SortMode.LineNumber;
 
 		public DocOutlineView()
 		{
 			InitializeComponent();
 
+			// Default sort mode selection
+			sortByLineBtn.IsChecked = true;
+
+			// Sort button handler
+			// Change sort mode for current CDM and generate outline new.
+			sortByLineBtn.Click += new RoutedEventHandler((o, e) =>
+			{
+				m_sortMode = SortMode.LineNumber;
+				OutlineDocument(CDM, CurrentDocument);
+				// Uncheck other sort buttons
+				sortByKindBtn.IsChecked = false;
+				sortByNameBtn.IsChecked = false;
+			});
 			sortByKindBtn.Click += new RoutedEventHandler((o, e) =>
 			{
-				m_sortByKind = !m_sortByKind;
+				m_sortMode = SortMode.ElementKind;
 				OutlineDocument(CDM, CurrentDocument);
+				// Uncheck other sort buttons
+				sortByLineBtn.IsChecked = false;
+				sortByNameBtn.IsChecked = false;
 			});
 			sortByNameBtn.Click += new RoutedEventHandler((o, e) =>
 			{
-				m_sortByName = !m_sortByName;
+				m_sortMode = SortMode.ElementName;
 				OutlineDocument(CDM, CurrentDocument);
+				// Uncheck other sort buttons
+				sortByKindBtn.IsChecked = false;
+				sortByLineBtn.IsChecked = false;
 			});
 		}
 
-		#region Sort Hierarchie
-		public void Sort(CodeDocumentModel cdm)
-		{
-			if (cdm == null)
-				return;
-
-			SortList(cdm.RootElements);
-
-			foreach (var element in cdm.RootElements)
-			{
-				RecursivSort(element);
-			}
-		}
-
-		private void RecursivSort(ICodeDocumentElement element)
-		{
-			SortList(element.Children);
-
-			foreach (var children in element.Children)
-			{
-				RecursivSort(children);
-			}
-		}
-
-		private void SortList(List<ICodeDocumentElement> list)
-		{
-			// Sort by LineNumber
-			list.Sort((x, y) =>
-			{
-				if (x == null || y == null)
-					return 0;
-
-				return x.LineNumber.CompareTo(y.LineNumber);
-			});
-
-			if (m_sortByKind)
-			{
-				// Sort by Kind
-				list.Sort((x, y) =>
-				{
-					if (x == null || y == null)
-						return 0;
-
-					return x.Kind.CompareTo(y.Kind);
-				});
-			}
-
-			if (m_sortByName)
-			{
-				// Sort by Name
-				list.Sort((x, y) =>
-				{
-					if (x == null || y == null)
-						return 0;
-
-					return x.ElementName.CompareTo(y.ElementName);
-				});
-			}
-		}
-		#endregion
-
+		/// <summary>
+		/// Create a CETreeView hierarchy for the given CodeDocumentModel.
+		/// This calls CDM.Sort() before creating the hierarchy.
+		/// </summary>
+		/// <param name="cdm"></param>
+		/// <param name="doc"></param>
 		public void OutlineDocument(CodeDocumentModel cdm, Document doc)
 		{
 			if (cdm == null)
@@ -121,7 +84,7 @@ namespace DavidSpeck.CSharpDocOutline
 			CurrentDocument = doc;
 
 			// Apply sorting
-			Sort(CDM);
+			CDM.Sort(m_sortMode);
 
 			// Remove old tree
 			outlineTreeView.Items.Clear();
@@ -139,7 +102,12 @@ namespace DavidSpeck.CSharpDocOutline
 			}
 		}
 
-		public void AddCodeElementToTreeViewRecursively(ICodeDocumentElement element, TreeViewItem parent)
+		/// <summary>
+		/// Generate CETreeViewItems for all CodeDocumentElements in a tree recursivly.
+		/// </summary>
+		/// <param name="element"></param>
+		/// <param name="parent"></param>
+		public void AddCodeElementToTreeViewRecursively(ICodeDocumentElement element, CETreeViewItem parent)
 		{
 			var item = new CETreeViewItem(element);
 			item.Header = element.ToString();
@@ -156,6 +124,10 @@ namespace DavidSpeck.CSharpDocOutline
 		}
 
 		#region Event handler
+		/// <summary>
+		/// Mark a CETreeViewItem once it is selected.
+		/// This will be used to identify the item which triggered a event bubble.
+		/// </summary>
 		private void OnItemSelected(object sender, RoutedEventArgs e)
 		{
 			m_selected = (CETreeViewItem) sender;
@@ -169,8 +141,6 @@ namespace DavidSpeck.CSharpDocOutline
 		/// So do all focus changes only once in the root element.
 		/// Change the focus to the current code document.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		public void OnRootElementMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			CurrentDocument.Activate();
@@ -182,8 +152,6 @@ namespace DavidSpeck.CSharpDocOutline
 		/// Don't change the focus here because of the way how events bubble in TreeViewItems.
 		/// See OnRootElementMouseDoubleClick() for the focus change.
 		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
 		public void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			var item = (CETreeViewItem) sender;

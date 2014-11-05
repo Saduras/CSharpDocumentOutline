@@ -207,6 +207,9 @@
 		<StackPanel Orientation="Vertical">
 			<StackPanel Orientation="Horizontal" 
 						Background="{DynamicResource VsBrush.CommandBarBorderKey}">
+				<ToggleButton Name="sortByLineBtn">
+					Sort by line number
+				</ToggleButton>
 				<ToggleButton Name="sortByKindBtn">
 					Sort by kind
 				</ToggleButton>
