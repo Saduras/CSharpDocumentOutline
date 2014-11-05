@@ -27,12 +27,19 @@ namespace DavidSpeck.CSharpDocOutline
 	/// </summary>
 	public partial class DocOutlineView : UserControl
 	{
+		enum VSTheme {
+			Blue,
+			Light,
+			Dark
+		}
+
 		public CodeDocumentModel CDM { get; private set; }
 		public Document CurrentDocument { get; private set; }
 
 		CETreeViewItem m_selected = null;
 
 		SortMode m_sortMode = SortMode.LineNumber;
+		VSTheme m_currentTheme = VSTheme.Blue;
 
 		public DocOutlineView()
 		{
@@ -77,6 +84,8 @@ namespace DavidSpeck.CSharpDocOutline
 		/// <param name="doc"></param>
 		public void OutlineDocument(CodeDocumentModel cdm, Document doc)
 		{
+			CheckCurrentTheme();
+
 			if (cdm == null)
 				return;
 
@@ -110,7 +119,28 @@ namespace DavidSpeck.CSharpDocOutline
 		public void AddCodeElementToTreeViewRecursively(ICodeDocumentElement element, CETreeViewItem parent)
 		{
 			var item = new CETreeViewItem(element);
-			item.Header = element.ToString();
+
+			var stack = new StackPanel();
+			stack.Orientation = Orientation.Horizontal;
+			stack.Height = 16;
+
+			// Add access modifier icon
+			if (element.Kind != CEKind.Namespace && element.Kind != CEKind.Region)
+			{
+				var accessImg = new Image();
+				accessImg.Name = "accessModifierImage";
+				accessImg.Source = new BitmapImage(GetAccessIconUri(element.AccessModifier));
+				accessImg.Stretch = Stretch.UniformToFill;
+				stack.Children.Add(accessImg);
+			}
+
+			// Add element name string
+			var nameText = new TextBlock();
+			nameText.Name = "nameBlock";
+			nameText.Text = element.ElementName;
+			stack.Children.Add(nameText);
+
+			item.Header = stack;
 			parent.Items.Add(item);
 			item.IsExpanded = true;
 			item.Style = (Style) this.Resources["CETreeViewItem"];
@@ -186,5 +216,53 @@ namespace DavidSpeck.CSharpDocOutline
 			e.Handled = true;
 		}
 		#endregion
+
+		private Uri GetAccessIconUri(CEAccessModifier accessModifier)
+		{
+			string themeString = "light";
+			switch (m_currentTheme)
+			{
+				case VSTheme.Dark:
+					themeString = "light";
+					break;
+				case VSTheme.Light:
+				case VSTheme.Blue:
+					themeString = "dark";
+					break;
+			}
+
+			string iconName = "";
+			switch (accessModifier)
+			{
+				case CEAccessModifier.Public:
+					iconName = "icon_public_" + themeString + ".png";
+					break;
+				default:
+					iconName = "icon_private_" + themeString + ".png";
+					break;
+			}
+
+			return new Uri("pack://application:,,,/CSharpDocOutline;component/Resources/" + iconName, UriKind.Absolute);
+		}
+
+		private void CheckCurrentTheme()
+		{
+			// Use topbar background color to identify theme
+			var color = (topBar.Background as SolidColorBrush).Color;
+
+			switch (color.ToString())
+			{
+				case "#FF2D2D30":
+					m_currentTheme = VSTheme.Dark;
+					break;
+				case "#FFCFD6E5":
+					m_currentTheme = VSTheme.Blue;
+					break;
+				default:
+					m_currentTheme = VSTheme.Light;
+					break;
+			}
+
+		}
 	}
 }

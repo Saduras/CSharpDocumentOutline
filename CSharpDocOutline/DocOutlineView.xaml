@@ -11,19 +11,18 @@
              Name="MyToolWindow">
 	<UserControl.Resources>
 		<Style TargetType="{x:Type ToggleButton}">
-			<Style.Resources>
+			<!--<Style.Resources>
 				<SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.ButtonTextKey}}" />
 				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.HighlightKey}}" />
 				<SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="{DynamicResource {x:Static shell:VsColors.HighlightTextKey}}" />
-			</Style.Resources>
+			</Style.Resources>-->
 			<Setter Property="Margin" Value="2,6,2,6"/>
 			<Setter Property="Template">
 				<Setter.Value>
 					<ControlTemplate TargetType="{x:Type ToggleButton}">
 						<Border x:Name="bg" BorderThickness="0"
 								Padding="4,2,4,2"
-								BorderBrush="{DynamicResource {x:Static shell:VsBrushes.CommandBarBorderKey}}"
-								Background="{DynamicResource {x:Static shell:VsBrushes.CommandBarBorderKey}}">
+								Background="{DynamicResource {x:Static shell:VsBrushes.CommandBarGradientMiddleKey}}">
 							<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                             VerticalAlignment="{TemplateBinding VerticalAlignment}" />
 						</Border>
@@ -175,7 +174,7 @@
 	</UserControl.Resources>
 	<Grid>
 		<StackPanel Orientation="Vertical">
-			<StackPanel Orientation="Horizontal" Background="{DynamicResource {x:Static shell:VsBrushes.CommandBarBorderKey}}">
+			<StackPanel Orientation="Horizontal" Background="{DynamicResource {x:Static shell:VsBrushes.CommandBarGradientMiddleKey}}" Name="topBar">
 				<ToggleButton Name="sortByLineBtn">
 					Sort by line number
 				</ToggleButton>

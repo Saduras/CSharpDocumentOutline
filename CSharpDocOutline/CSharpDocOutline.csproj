@@ -193,6 +193,11 @@
     <None Include="Resources\Images.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\CSharpDocOutlineIcons.png" />
+    <Resource Include="Resources\icon_private_dark.png" />
+    <Resource Include="Resources\icon_private_light.png" />
+    <Resource Include="Resources\icon_public_dark.png" />
+    <Resource Include="Resources\icon_public_light.png" />
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>
