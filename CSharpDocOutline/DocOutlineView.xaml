@@ -70,11 +70,11 @@
 												<Setter.Value>
 													<ControlTemplate TargetType="ToggleButton">
 														<Border Padding="5,5,5,5"
-																Background="#00FFFFFF"
+																Background="{DynamicResource {x:Static shell:VsBrushes.ToolWindowBackgroundKey}}"
 																Width="16"
 																Height="16">
-															<Path Fill="#00FFFFFF"
-																	Stroke="#FF989898"
+															<Path Fill="{DynamicResource {x:Static shell:VsBrushes.ToolWindowBackgroundKey}}"
+																	Stroke="{DynamicResource {x:Static shell:VsBrushes.WindowTextKey}}"
 																	Name="ExpandPath">
 																<Path.Data>
 																	<PathGeometry Figures="M0,0L0,6L6,0z" />
@@ -88,10 +88,10 @@
 															<Trigger Property="UIElement.IsMouseOver" Value="True">
 																<Setter TargetName="ExpandPath" 
 																		Property="Shape.Stroke"
-																		Value="#FF1BBBFA" />
+																		Value="{DynamicResource {x:Static shell:VsBrushes.HighlightKey}}" />
 																<Setter TargetName="ExpandPath"
 																		Property="Shape.Fill"
-																		Value="#00FFFFFF" />
+																		Value="{DynamicResource {x:Static shell:VsBrushes.ToolWindowBackgroundKey}}" />
 															</Trigger>
 															<Trigger Property="ToggleButton.IsChecked" Value="True">
 																<Setter TargetName="ExpandPath"
@@ -102,10 +102,10 @@
 																</Setter>
 																<Setter TargetName="ExpandPath"
 																		Property="Shape.Fill"
-																		Value="#FF595959" />
+																		Value="{DynamicResource {x:Static shell:VsBrushes.ButtonTextKey}}" />
 																<Setter TargetName="ExpandPath"
 																		Property="Shape.Stroke"
-																		Value="#FF262626" />
+																		Value="{DynamicResource {x:Static shell:VsBrushes.ButtonTextKey}}" />
 															</Trigger>
 														</ControlTemplate.Triggers>
 													</ControlTemplate>
