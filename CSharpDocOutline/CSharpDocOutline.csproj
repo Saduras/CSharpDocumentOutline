@@ -134,7 +134,8 @@
     <Compile Include="CDM\CodeElement\CEFunction.cs" />
     <Compile Include="CDM\CodeElement\GenericCodeElement.cs" />
     <Compile Include="CDM\Parser\Blacklist\BRIgnoreKeyword.cs" />
-    <Compile Include="CDM\Parser\Blacklist\BRSkipLinesInsideFunctions.cs" />
+    <Compile Include="CDM\Parser\Blacklist\BRSkipLinesInsideMethods.cs" />
+    <Compile Include="CDM\Parser\Blacklist\BRSkipLinesInsideProperties.cs" />
     <Compile Include="CDM\Parser\Blacklist\IBlacklistRule.cs" />
     <Compile Include="CDM\Parser\CDMParser.cs" />
     <Compile Include="CDM\CodeElement\ICodeDocumentElement.cs" />
@@ -203,7 +204,7 @@
     <Resource Include="Resources\icon_enum.png" />
     <Resource Include="Resources\icon_event.png" />
     <Resource Include="Resources\icon_interface.png" />
-    <Resource Include="Resources\icon_methode.png" />
+    <Resource Include="Resources\icon_method.png" />
     <Resource Include="Resources\icon_namespace.png" />
     <Resource Include="Resources\icon_property.png" />
     <Resource Include="Resources\icon_region.png" />

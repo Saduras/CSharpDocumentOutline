@@ -173,8 +173,11 @@
 		</Style>
 	</UserControl.Resources>
 	<Grid>
-		<StackPanel Orientation="Vertical">
-			<StackPanel Orientation="Horizontal" Background="{DynamicResource {x:Static shell:VsBrushes.CommandBarGradientMiddleKey}}" Name="topBar">
+		<DockPanel>
+			<StackPanel Orientation="Horizontal" 
+						Background="{DynamicResource {x:Static shell:VsBrushes.CommandBarGradientMiddleKey}}" 
+						Name="topBar"
+						DockPanel.Dock="Top">
 				<ToggleButton Name="sortByLineBtn">
 					Sort by line number
 				</ToggleButton>
@@ -188,8 +191,9 @@
 			<TreeView Name="outlineTreeView" 
 					  Background="{DynamicResource VsBrush.Window}"
 					  BorderThickness="0"
+					  VerticalAlignment="Stretch"
 					  ItemContainerStyle="{StaticResource CETreeViewItem}">
 			</TreeView>
-		</StackPanel>
+		</DockPanel>
 	</Grid>
 </UserControl>
