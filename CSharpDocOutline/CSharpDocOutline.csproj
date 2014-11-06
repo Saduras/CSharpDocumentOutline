@@ -144,7 +144,7 @@
     <Compile Include="CDM\Parser\ParserUtilities.cs" />
     <Compile Include="CDM\Parser\Whitelist\CEConstructorParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\CEMethodParser.cs" />
-    <Compile Include="CDM\Parser\Whitelist\CEFieldParser.cs" />
+    <Compile Include="CDM\Parser\Whitelist\CEVariableParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\CEPropertyParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\CERegionParser.cs" />
     <Compile Include="CDM\Parser\Whitelist\GenericKeywordCEParser.cs" />

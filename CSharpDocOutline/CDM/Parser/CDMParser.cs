@@ -29,7 +29,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             new GenericKeywordCEParser("enum",          CEKind.Enum,        CEAccessModifier.Internal,	GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:false,	hasParameter:false),
             new GenericKeywordCEParser("event",         CEKind.Event,       CEAccessModifier.Private,	GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:false),
             new GenericKeywordCEParser("delegate",      CEKind.Delegate,    CEAccessModifier.Private,	GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:true),
-            new CEFieldParser(),
+            new CEVariableParser(),
 			new CEConstructorParser(),
 			new CEMethodParser(),
 			new CEPropertyParser(),

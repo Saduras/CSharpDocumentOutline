@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
-    public class CEFieldParser : ICEParser
+    public class CEVariableParser : ICEParser
     {
         public bool CheckPreCondition(string statement, CDMParser parser)
         {
-            return !string.IsNullOrEmpty(statement) && statement.Last() == ';';
+			// To be a variable the statement must end of ;
+			// But there are cases were first a '{' appears (list/array with default values) than there is atleast a =
+            return !string.IsNullOrEmpty(statement) && (statement.Last() == ';' || statement.IndexOf('=') > 0);
         }
 
 		public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
