@@ -15,7 +15,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         public bool CanHaveMember { get { return false; } }
 
         public CEAccessModifier AccessModifier { get; set; }
-        public CEKind Kind { get { return CEKind.Methode; } }
+        public CEKind Kind { get { return CEKind.Method; } }
         public string ElementName { get; set; }
         public string ElementType { get; set; }
         public List<CEParameter> Parameters { get; private set; }

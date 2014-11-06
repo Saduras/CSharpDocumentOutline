@@ -148,7 +148,7 @@ namespace DavidSpeck.CSharpDocOutline
 			nameText.Name = "nameBlock";
 			nameText.Text = element.ElementName;
 			// Add parameters for methods and delegates
-			if (element.Kind == CEKind.Methode || element.Kind == CEKind.Delegate)
+			if (element.Kind == CEKind.Method || element.Kind == CEKind.Delegate)
 			{
 				nameText.Text += "(";
 				for (int i = 0; i < element.Parameters.Count; i++)

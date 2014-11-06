@@ -13,7 +13,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         Enum,
         Struct,
         Interface,
-        Methode,
+        Method,
         Variable,
         Property,
         Event,
