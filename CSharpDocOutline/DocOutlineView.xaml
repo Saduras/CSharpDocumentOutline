@@ -27,11 +27,15 @@
 								<Setter Property="Background"
 										Value="{DynamicResource {x:Static shell:VsBrushes.HighlightKey}}"
 										TargetName="bg" />
+								<Setter Property="Foreground"
+										Value="{DynamicResource {x:Static shell:VsBrushes.HighlightTextKey}}"/>
 							</Trigger>
 							<Trigger Property="IsChecked" Value="True">
 								<Setter Property="Background"
 										Value="{DynamicResource {x:Static shell:VsBrushes.HighlightKey}}"
 										TargetName="bg" />
+								<Setter Property="Foreground"
+										Value="{DynamicResource {x:Static shell:VsBrushes.HighlightTextKey}}"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
@@ -155,7 +159,7 @@
 								</MultiTrigger.Conditions>
 								<Setter TargetName="Bd"
 										Property="Panel.Background"
-										Value="{DynamicResource {x:Static shell:VsBrushes.InactiveBorderKey}}" />
+										Value="{DynamicResource {x:Static shell:VsBrushes.InactiveCaptionKey}}" />
 								<Setter Property="TextElement.Foreground"
 										Value="{DynamicResource {x:Static shell:VsBrushes.ToolWindowTextKey}}" />
 							</MultiTrigger>
