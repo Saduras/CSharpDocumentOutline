@@ -36,7 +36,8 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         };
 		#endregion
 
-		private CodeDocumentModel m_cdm;
+        #region Member
+        private CodeDocumentModel m_cdm;
 
 		private ICodeDocumentElement m_currentParent;
 		public ICodeDocumentElement CurrentParent { get { return m_currentParent; } }
@@ -46,8 +47,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 		private int m_openBrackets = 0;
 		private bool m_multiLineComment = false;
+        #endregion
 
-		public void Init()
+        public void Init()
 		{
 			m_cdm = null;
 			m_currentParent = null;
@@ -94,6 +96,13 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 			if (m_multiLineComment)
 				return;
+
+			if (lineNumber == 74)
+			{
+				var a = 1;
+			}
+
+			line = RemoveStrings(line);
 
 			// Now parse the line until the next '{' and ';'
 			// Save line length
@@ -145,8 +154,6 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 				ParseLine(line, lineNumber);
 			}
 		}
-
-		
 
 		private void ParseElement(string statement, int lineNumber)
 		{
@@ -245,5 +252,44 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			}
 		}
 
+		/// <summary>
+		/// Crop out strings - the parsers should ignore everthing inside strings anyway.
+		/// Find pairs of double and single quotation marks and remove everthing in between.
+		/// </summary>
+		private string RemoveStrings(string line)
+		{
+			int lastFound = -1;
+			int indexFound = -1;
+			int indexEnd = -1;
+			while ((indexFound = line.IndexOf("\"")) > lastFound)
+			{
+				if ((indexEnd = line.IndexOf("\"", indexFound + 1)) > 0)
+				{
+					line = line.Remove(indexFound, indexEnd - indexFound + 1);
+					lastFound = -1;
+				}
+				else
+				{
+					lastFound = indexFound;
+				}
+			}
+			lastFound = -1;
+			indexFound = -1;
+			indexEnd = -1;
+			while ((indexFound = line.IndexOf("'")) > lastFound)
+			{
+				if ((indexEnd = line.IndexOf("'", indexFound + 1)) > 0)
+				{
+					line = line.Remove(indexFound, indexEnd - indexFound + 1);
+					lastFound = -1;
+				}
+				else
+				{
+					lastFound = indexFound;
+				}
+			}
+
+			return line;
+		}
 	}
 }
