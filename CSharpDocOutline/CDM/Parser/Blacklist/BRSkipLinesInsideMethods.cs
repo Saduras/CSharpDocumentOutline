@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
-    public class BRSkipLinesInsideFunctions : IBlacklistRule
+    public class BRSkipLinesInsideMethods : IBlacklistRule
     {
         public bool CheckCondition(CDMParser parser, string statment)
         {

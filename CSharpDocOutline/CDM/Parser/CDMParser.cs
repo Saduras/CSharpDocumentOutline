@@ -12,7 +12,8 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 	{
 		#region Blacklist
 		private IBlacklistRule[] m_blacklist = new IBlacklistRule[] {
-            new BRSkipLinesInsideFunctions(),
+            new BRSkipLinesInsideMethods(),
+			new BRSkipLinesInsideProperties(),
             new BRIgnoreKeyword("using"),
         };
 		#endregion
@@ -20,6 +21,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 		#region Element parser
 		private ICEParser[] m_elementParser = new ICEParser[]
         { 
+			new CERegionParser(),
             new GenericKeywordCEParser("namespace",     CEKind.Namespace,	CEAccessModifier.None,		GenericKeywordCEParser.HandleType.NoType,           canHaveMember:false,	hasParameter:false),
             new GenericKeywordCEParser("class",         CEKind.Class,		CEAccessModifier.Internal,  GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
             new GenericKeywordCEParser("struct",        CEKind.Struct,      CEAccessModifier.Internal,	GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:true,		hasParameter:false),
@@ -27,7 +29,6 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             new GenericKeywordCEParser("enum",          CEKind.Enum,        CEAccessModifier.Internal,	GenericKeywordCEParser.HandleType.TypeEqualName,    canHaveMember:false,	hasParameter:false),
             new GenericKeywordCEParser("event",         CEKind.Event,       CEAccessModifier.Private,	GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:false),
             new GenericKeywordCEParser("delegate",      CEKind.Delegate,    CEAccessModifier.Private,	GenericKeywordCEParser.HandleType.ParseType,        canHaveMember:false,	hasParameter:true),
-			new CERegionParser(),
             new CEFieldParser(),
 			new CEConstructorParser(),
 			new CEMethodParser(),
