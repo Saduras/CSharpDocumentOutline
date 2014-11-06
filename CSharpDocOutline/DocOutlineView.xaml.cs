@@ -143,23 +143,36 @@ namespace DavidSpeck.CSharpDocOutline
 			kindImg.Margin = new Thickness(0, 0, 5, 0); // add some space between icon and text
 			stack.Children.Add(kindImg);
 
+			// Add data type
+			if (element.Kind != CEKind.Namespace && element.Kind != CEKind.Region)
+			{
+				var typeText = new TextBlock();
+				typeText.Name = "typeBlock";
+				typeText.Text = element.ElementType + " ";
+				stack.Children.Add(typeText);
+			}
+
 			// Add element name string
 			var nameText = new TextBlock();
 			nameText.Name = "nameBlock";
-			nameText.Text = element.ElementName;
+			nameText.Inlines.Add(new Bold(new Run(element.ElementName)));
+			stack.Children.Add(nameText);
+
 			// Add parameters for methods and delegates
 			if (element.Kind == CEKind.Method || element.Kind == CEKind.Delegate)
 			{
-				nameText.Text += "(";
+				var paramText = new TextBlock();
+				paramText.Name = "paramBlock";
+				paramText.Text = "(";
 				for (int i = 0; i < element.Parameters.Count; i++)
 				{
-					nameText.Text += element.Parameters[i].Type + " " + element.Parameters[i].Name;
+					paramText.Text += element.Parameters[i].Type + " " + element.Parameters[i].Name;
 					if (i < element.Parameters.Count - 1)
-						nameText.Text += ", ";
+						paramText.Text += ", ";
 				}
-				nameText.Text += ")";
+				paramText.Text += ")";
+				stack.Children.Add(paramText);
 			}
-			stack.Children.Add(nameText);
 
 			item.Header = stack;
 			parent.Items.Add(item);
