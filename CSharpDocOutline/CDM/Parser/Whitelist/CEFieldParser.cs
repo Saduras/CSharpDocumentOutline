@@ -36,7 +36,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                     accessModifier = CEAccessModifierHelper.Parse(definitions[0], CEAccessModifier.Private);
 
                 GenericCodeElement field = new GenericCodeElement();
-				field.Kind = CEKind.Field;
+				field.Kind = CEKind.Variable;
 				field.CanHaveMember = false;
                 field.LineNumber = lineNumber;
                 field.ElementName = name;

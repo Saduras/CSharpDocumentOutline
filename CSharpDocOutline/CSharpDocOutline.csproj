@@ -198,6 +198,17 @@
     <Resource Include="Resources\icon_private_light.png" />
     <Resource Include="Resources\icon_public_dark.png" />
     <Resource Include="Resources\icon_public_light.png" />
+    <Resource Include="Resources\icon_class.png" />
+    <Resource Include="Resources\icon_delegate.png" />
+    <Resource Include="Resources\icon_enum.png" />
+    <Resource Include="Resources\icon_event.png" />
+    <Resource Include="Resources\icon_interface.png" />
+    <Resource Include="Resources\icon_methode.png" />
+    <Resource Include="Resources\icon_namespace.png" />
+    <Resource Include="Resources\icon_property.png" />
+    <Resource Include="Resources\icon_region.png" />
+    <Resource Include="Resources\icon_struct.png" />
+    <Resource Include="Resources\icon_variable.png" />
     <Content Include="Resources\Package.ico" />
   </ItemGroup>
   <ItemGroup>

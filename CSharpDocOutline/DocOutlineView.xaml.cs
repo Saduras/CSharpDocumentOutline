@@ -27,6 +27,7 @@ namespace DavidSpeck.CSharpDocOutline
 	/// </summary>
 	public partial class DocOutlineView : UserControl
 	{
+		// Represents the aviable visual studio themes
 		enum VSTheme {
 			Blue,
 			Light,
@@ -134,6 +135,14 @@ namespace DavidSpeck.CSharpDocOutline
 				stack.Children.Add(accessImg);
 			}
 
+			// Add CEKind icon
+			var kindImg = new Image();
+			kindImg.Name = "kindImage";
+			kindImg.Source = new BitmapImage(GetKindIconUri(element.Kind));
+			kindImg.Stretch = Stretch.UniformToFill;
+			kindImg.Margin = new Thickness(0, 0, 5, 0); // add some space between icon and text
+			stack.Children.Add(kindImg);
+
 			// Add element name string
 			var nameText = new TextBlock();
 			nameText.Name = "nameBlock";
@@ -217,6 +226,7 @@ namespace DavidSpeck.CSharpDocOutline
 		}
 		#endregion
 
+		#region Theme helper
 		private Uri GetAccessIconUri(CEAccessModifier accessModifier)
 		{
 			string themeString = "light";
@@ -245,6 +255,13 @@ namespace DavidSpeck.CSharpDocOutline
 			return new Uri("pack://application:,,,/CSharpDocOutline;component/Resources/" + iconName, UriKind.Absolute);
 		}
 
+		private Uri GetKindIconUri(CEKind kind)
+		{
+			string iconName = "icon_" + kind.ToString().ToLower() + ".png";
+
+			return new Uri("pack://application:,,,/CSharpDocOutline;component/Resources/" + iconName, UriKind.Absolute);
+		}
+
 		private void CheckCurrentTheme()
 		{
 			// Use topbar background color to identify theme
@@ -264,5 +281,6 @@ namespace DavidSpeck.CSharpDocOutline
 			}
 
 		}
+		#endregion
 	}
 }

@@ -10,7 +10,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
     {
         public bool CheckCondition(CDMParser parser, string statment)
         {
-            return parser.CurrentParent != null && parser.CurrentParent.Kind == CEKind.Function;
+            return parser.CurrentParent != null && parser.CurrentParent.Kind == CEKind.Methode;
         }
     }
 }
