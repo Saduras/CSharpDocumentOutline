@@ -11,6 +11,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 	public class CDMParser
 	{
 		#region Blacklist
+		/// <summary>
+		/// Blacklist rules are conditions when to not parse a certain element.
+		/// </summary>
 		private IBlacklistRule[] m_blacklist = new IBlacklistRule[] {
             new BRSkipLinesInsideMethods(),
 			new BRSkipLinesInsideProperties(),
@@ -19,6 +22,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 		#endregion
 
 		#region Element parser
+		/// <summary>
+		/// All setuped element parser. They will check in the same exact order. The Order matters in some cases.
+		/// </summary>
 		private ICEParser[] m_elementParser = new ICEParser[]
         { 
 			new CERegionParser(),
@@ -59,6 +65,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			m_multiLineComment = false;
 		}
 
+		/// <summary>
+		/// Parse the a given document and create a CodeDocumentModel for it.
+		/// </summary>
 		public void Parse(StreamReader reader, ref CodeDocumentModel cdm)
 		{
 			m_cdm = cdm;
@@ -71,6 +80,10 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			}
 		}
 
+		/// <summary>
+		/// Try parsing a line of code. Find element statements and forward them to the ParseElement() function.
+		/// Once an element is found, repead recursivly with the rest of the line.
+		/// </summary>
 		private void ParseLine(string line, int lineNumber)
 		{
 			Debug.WriteLine("Parsing line " + lineNumber);
@@ -155,6 +168,10 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			}
 		}
 
+		/// <summary>
+		/// Check all blacklist rules for the given statement. Then check for a matching element parser
+		/// and hand the statment to the found parser.
+		/// </summary>
 		private void ParseElement(string statement, int lineNumber)
 		{
 			ICodeDocumentElement element = null;
@@ -181,7 +198,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 				if (parser.CheckPreCondition(statement, this))
 				{
 					var parentKind = (CurrentParent != null) ? CurrentParent.Kind : CEKind.Namespace;
-					element = parser.Parse(statement, lineNumber, parentKind);
+					element = parser.TryParse(statement, lineNumber, parentKind);
 					break;
 				}
 			}
@@ -199,6 +216,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			}
 		}
 
+		/// <summary>
+		/// Add a parsed CodeDocumentElement to the CodeDocumentModel.
+		/// </summary>
 		private void AddToCDM(ICodeDocumentElement element)
 		{
 			Debug.WriteLine("Add " + element.Kind + " to CDM");
@@ -213,6 +233,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			}
 		}
 
+		/// <summary>
+		/// Find a semicolon delimiter and gives the found statement to the ParseElement() function.
+		/// </summary>
 		private string ParseSemicolonSeperatedElements(string statements, int lineNumber)
 		{
 			string statement = statements;
@@ -234,6 +257,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			return statements;
 		}
 
+		/// <summary>
+		/// Find closing cureld brackets and update parenting accordingly.
+		/// </summary>
 		private void CheckForClosingBrackets(string statement)
 		{
 			string tmpString = (string) statement.Clone();

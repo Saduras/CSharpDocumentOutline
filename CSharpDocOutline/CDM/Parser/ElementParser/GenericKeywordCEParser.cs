@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
+	/// <summary>
+	/// Code element parser for all keyword identified code elements.
+	/// </summary>
     public class GenericKeywordCEParser : ICEParser
     {
+		/// <summary>
+		/// Possible options how to handle the datatype for a created CodeDocumentElement.
+		/// </summary>
         public enum HandleType
         {
             NoType,
@@ -16,12 +22,23 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             ParseType
         }
 
+		/// <summary>
+		/// The keyword which identifies the wanted statement with spaces.
+		/// Spaces are added to improve precision.
+		/// </summary>
         string Keyword { get; set; }
+		/// <summary>
+		/// The keyword which identifies the wanted statement with only following space.
+		/// This is used to find the keyword at the beginning of the statement.
+		/// </summary>
         string StartKeyword { get; set; }
+
         CEKind Kind { get; set; }
         HandleType HowHandleType { get; set; }
+		// Class, structs and interfaces can have member
 		bool CanHaveMember { get; set; }
 		bool HasParameter { get; set; }
+		// The DefaultAccessModifier will be used if no access modifier is set in a statement.
 		CEAccessModifier DefaultAccessModifier { get; set; }
 
         public GenericKeywordCEParser(string keyword, CEKind kind, CEAccessModifier defaultAccessModifier, HandleType howHandleType, bool canHaveMember, bool hasParameter)
@@ -30,6 +47,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             // Add this to the requirement reduce miss-interpretation rate.
             Keyword = " " + keyword.Trim() + " ";
             StartKeyword = keyword.Trim() + " ";
+
             Kind = kind;
 			DefaultAccessModifier = defaultAccessModifier;
             CanHaveMember = canHaveMember;
@@ -44,16 +62,16 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 || (statement.IndexOf(StartKeyword, StringComparison.CurrentCultureIgnoreCase)) == 0;
         }
 
-        public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
+        public ICodeDocumentElement TryParse(string statement, int lineNumber, CEKind parentKind)
         {
             int indexOfKeyword = statement.IndexOf(Keyword, StringComparison.CurrentCultureIgnoreCase);
             if (indexOfKeyword < 0 && statement.IndexOf(StartKeyword, StringComparison.CurrentCultureIgnoreCase) == 0)
                 indexOfKeyword = 0;
 
-			return this.Parse(statement, lineNumber, indexOfKeyword, parentKind);
+			return this.TryParse(statement, lineNumber, indexOfKeyword, parentKind);
         }
 
-		public ICodeDocumentElement Parse(string statement, int lineNumber, int indexOfKeyword, CEKind parentKind)
+		public ICodeDocumentElement TryParse(string statement, int lineNumber, int indexOfKeyword, CEKind parentKind)
         {
             if (indexOfKeyword < 0)
                 return null;
@@ -69,7 +87,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 				string definitionString = (string) statement.Clone();
 
-				// If there is a '(' ignore everthing behund this char
+				// If there is a '(' ignore everthing behind this char
 				// for the defintion parsing
 				int bracketStart = -1;
 				if (HasParameter)
@@ -113,7 +131,8 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                         break;
                 }
 
-				
+				// If a opening bracked was found, find the closing one
+				// and parse the parameters inside.
 				if (bracketStart > 0)
 				{
 					int bracketEnd = statement.IndexOf(')');
@@ -122,6 +141,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 				}
 
                 cde.LineNumber = lineNumber;
+
+				// Use the code element kind of the parent to figure out the default access modifier.
+				// This is necessary a the default access modifier depents on the parent element.
 				switch (parentKind)
 				{
 					case CEKind.Class:
@@ -152,6 +174,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             }
         }
 
+		/// <summary>
+		/// Parse the parameters type and name from a given parameter string.
+		/// </summary>
 		public void ParseParameters(string paramString, ref GenericCodeElement cde)
 		{
 			string[] parameters = paramString.Split(new Char[]{','}, StringSplitOptions.RemoveEmptyEntries);

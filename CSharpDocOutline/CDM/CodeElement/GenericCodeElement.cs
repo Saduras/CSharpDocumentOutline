@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
+	/// <summary>
+	/// Generic implementation of the ICodeDocumentElement interface to represent all possible code elements.
+	/// Pure data class.
+	/// </summary>
     public class GenericCodeElement : ICodeDocumentElement
     {
         public ICodeDocumentElement Parent { get; set; }
@@ -26,6 +30,10 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			Parameters = new List<CEParameter>();
         }
 
+		/// <summary>
+		/// Recursive ToString implementation to creat a string whichs visualies the tree structur.
+		/// </summary>
+		/// <param name="depth">Current level of depth in the tree, used for indentation.</param>
         public string ToString(int depth)
         {
             string tabs = "";

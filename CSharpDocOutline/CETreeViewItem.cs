@@ -10,6 +10,9 @@ using System.Windows.Controls;
 
 namespace DavidSpeck.CSharpDocOutline
 {
+	/// <summary>
+	/// Custom TreeViewItem implementation to add a reference to a ICodeDocumentElement
+	/// </summary>
 	public class CETreeViewItem : TreeViewItem
 	{
 		public ICodeDocumentElement CDElement { get; private set; }

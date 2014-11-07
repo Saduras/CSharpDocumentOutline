@@ -18,6 +18,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
     public static class CEAccessModifierHelper
     {
+		/// <summary>
+		/// Helper to parse a CEAccessModifier from a given string.
+		/// </summary>
         public static CEAccessModifier Parse(string str, CEAccessModifier defaultValue)
         {
             str.Trim();

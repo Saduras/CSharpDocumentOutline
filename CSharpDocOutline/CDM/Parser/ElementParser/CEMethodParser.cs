@@ -7,14 +7,17 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
+	/// <summary>
+	/// 
+	/// </summary>
     public class CEMethodParser : ICEParser
     {
         public bool CheckPreCondition(string statement, CDMParser parser)
         {
-            return statement.IndexOf("(") > 0;
+			return statement.IndexOf("(") > 0 && parser.CurrentParent != null && parser.CurrentParent.CanHaveMember;
         }
 
-		public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
+		public ICodeDocumentElement TryParse(string statement, int lineNumber, CEKind parentKind)
         {
             try
             {
@@ -23,13 +26,14 @@ namespace DavidSpeck.CSharpDocOutline.CDM
                 string definitionString = statement.Substring(0, openBracketIndex);
                 string paramString = statement.Substring(openBracketIndex + 1, statement.Length - openBracketIndex - 2);
 
-                CEFunction ceFunction = new CEFunction();
-                ceFunction.LineNumber = lineNumber;
+				GenericCodeElement ceMethod = new GenericCodeElement();
+                ceMethod.LineNumber = lineNumber;
+				ceMethod.Kind = CEKind.Method;
 
-                ParseDefinitons(definitionString, ref ceFunction);
-                ParseParameters(paramString, ref ceFunction);
+                ParseDefinitons(definitionString, ref ceMethod);
+                ParseParameters(paramString, ref ceMethod);
 
-                return ceFunction;
+                return ceMethod;
             }
             catch (Exception e)
             {
@@ -44,7 +48,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             }
         }
 
-        private void ParseDefinitons(string definitionString , ref CEFunction ceFunction)
+		private void ParseDefinitons(string definitionString, ref GenericCodeElement ceFunction)
         {
 			string[] definitons = ParserUtilities.GetWords(definitionString);
             // The last word before the parameters is always the function name.
@@ -61,7 +65,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
             ceFunction.AccessModifier = accessModifier;
         }
 
-        private void ParseParameters(string paramString, ref CEFunction ceFunction)
+		private void ParseParameters(string paramString, ref GenericCodeElement ceFunction)
         {
 			string[] parameters = paramString.Split(new Char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (var param in parameters)

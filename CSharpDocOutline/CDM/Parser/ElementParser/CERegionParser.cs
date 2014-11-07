@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
+	/// <summary>
+	/// Parser for #region statements.
+	/// </summary>
 	public class CERegionParser : ICEParser
 	{
 		public bool CheckPreCondition(string statement, CDMParser parser)
@@ -14,7 +17,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			return statement.Trim().StartsWith("#region");
 		}
 
-		public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
+		public ICodeDocumentElement TryParse(string statement, int lineNumber, CEKind parentKind)
 		{
 			try
 			{

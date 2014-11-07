@@ -131,7 +131,6 @@
     </COMReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CDM\CodeElement\CEFunction.cs" />
     <Compile Include="CDM\CodeElement\GenericCodeElement.cs" />
     <Compile Include="CDM\Parser\Blacklist\BRIgnoreKeyword.cs" />
     <Compile Include="CDM\Parser\Blacklist\BRSkipLinesInsideMethods.cs" />
@@ -142,13 +141,13 @@
     <Compile Include="CDM\CodeElement\CEKind.cs" />
     <Compile Include="CDM\CodeElement\CEAccessModifier.cs" />
     <Compile Include="CDM\Parser\ParserUtilities.cs" />
-    <Compile Include="CDM\Parser\Whitelist\CEConstructorParser.cs" />
-    <Compile Include="CDM\Parser\Whitelist\CEMethodParser.cs" />
-    <Compile Include="CDM\Parser\Whitelist\CEVariableParser.cs" />
-    <Compile Include="CDM\Parser\Whitelist\CEPropertyParser.cs" />
-    <Compile Include="CDM\Parser\Whitelist\CERegionParser.cs" />
-    <Compile Include="CDM\Parser\Whitelist\GenericKeywordCEParser.cs" />
-    <Compile Include="CDM\Parser\Whitelist\ICEParser.cs" />
+    <Compile Include="CDM\Parser\ElementParser\CEConstructorParser.cs" />
+    <Compile Include="CDM\Parser\ElementParser\CEMethodParser.cs" />
+    <Compile Include="CDM\Parser\ElementParser\CEVariableParser.cs" />
+    <Compile Include="CDM\Parser\ElementParser\CEPropertyParser.cs" />
+    <Compile Include="CDM\Parser\ElementParser\CERegionParser.cs" />
+    <Compile Include="CDM\Parser\ElementParser\GenericKeywordCEParser.cs" />
+    <Compile Include="CDM\Parser\ElementParser\ICEParser.cs" />
     <Compile Include="CETreeViewItem.cs" />
     <Compile Include="DocOutlineView.xaml.cs">
       <DependentUpon>DocOutlineView.xaml</DependentUpon>

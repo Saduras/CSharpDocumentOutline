@@ -7,16 +7,20 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
+	/// <summary>
+	/// Parse statement for member variables.
+	/// </summary>
     public class CEVariableParser : ICEParser
     {
         public bool CheckPreCondition(string statement, CDMParser parser)
         {
 			// To be a variable the statement must end of ;
 			// But there are cases were first a '{' appears (list/array with default values) than there is atleast a =
-            return !string.IsNullOrEmpty(statement) && (statement.Last() == ';' || statement.IndexOf('=') > 0);
+			return !string.IsNullOrEmpty(statement) && (statement.Last() == ';' || statement.IndexOf('=') > 0) 
+					&& parser.CurrentParent != null && parser.CurrentParent.CanHaveMember;
         }
 
-		public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
+		public ICodeDocumentElement TryParse(string statement, int lineNumber, CEKind parentKind)
         {
             try
             {

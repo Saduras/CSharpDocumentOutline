@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
+	/// <summary>
+	/// Intercace for code document elements. Pure data class to descripe hierachie 
+	/// and attributes of code elements for the CodeDocumentModel.
+	/// </summary>
     public interface ICodeDocumentElement
     {
         ICodeDocumentElement Parent { get; set; }

@@ -27,11 +27,11 @@ namespace DavidSpeck.CSharpDocOutline
     [Guid("bc1bea3f-26f8-4e72-b3c6-087cd5b46332")]
     public class DocumentOutlineWindow : ToolWindowPane
     {
-        CDMParser _parser = new CDMParser();
-		DocOutlineView _docOutline;
+        CDMParser m_parser = new CDMParser();
+		DocOutlineView m_docOutline;
 
-        Events _events;
-        DocumentEvents _docEvents;
+        Events m_events;
+        DocumentEvents m_docEvents;
 
         /// <summary>
         /// Standard constructor for the tool window.
@@ -52,14 +52,13 @@ namespace DavidSpeck.CSharpDocOutline
             // This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
             // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on 
             // the object returned by the Content property.
-            _docOutline = new DocOutlineView();
-            base.Content = _docOutline;
+            m_docOutline = new DocOutlineView();
+            base.Content = m_docOutline;
         }
 
         protected override void Initialize()
         {
             base.Initialize();
-            
             ConnectEvents();
         }
 
@@ -76,11 +75,11 @@ namespace DavidSpeck.CSharpDocOutline
 
             // Keeping this references is required to prevent these objects from
             // beeing garbage collected.
-            _events = dte.Events;
-            _docEvents = _events.DocumentEvents;
+            m_events = dte.Events;
+            m_docEvents = m_events.DocumentEvents;
 
-            _events.WindowEvents.WindowActivated += new _dispWindowEvents_WindowActivatedEventHandler(OnWindowActivated);
-            _docEvents.DocumentSaved += new _dispDocumentEvents_DocumentSavedEventHandler(OnDocumentSaved);
+            m_events.WindowEvents.WindowActivated += new _dispWindowEvents_WindowActivatedEventHandler(OnWindowActivated);
+            m_docEvents.DocumentSaved += new _dispDocumentEvents_DocumentSavedEventHandler(OnDocumentSaved);
         }
 
         
@@ -93,41 +92,53 @@ namespace DavidSpeck.CSharpDocOutline
                 dte.Events.WindowEvents.WindowActivated -= new _dispWindowEvents_WindowActivatedEventHandler(OnWindowActivated);
                 dte.Events.DocumentEvents.DocumentSaved -= new _dispDocumentEvents_DocumentSavedEventHandler(OnDocumentSaved);
             }
-            _events = null;
-            _docEvents = null;
+
+			// Free references for garbage collection.
+            m_events = null;
+            m_docEvents = null;
         }
         #endregion
 
         #region Event handler
+		/// <summary>
+		/// If another document got active that currently outlined generate outline for this new document.
+		/// </summary>
         private void OnWindowActivated(EnvDTE.Window GotFocus, EnvDTE.Window LostFocus)
         {
             if (GotFocus.Document != null)
             {
                 var doc = GotFocus.Document;
 				// Cancle re-parsing if the document hasn't changed
-				if (_docOutline.CurrentDocument != null && doc.FullName == _docOutline.CurrentDocument.FullName)
+				if (m_docOutline.CurrentDocument != null && doc.FullName == m_docOutline.CurrentDocument.FullName)
 					return;
 
                 OutlineDocument(doc);
             }
         }
 
+		/// <summary>
+		/// Regenerate outline when a document is saved.
+		/// </summary>
         private void OnDocumentSaved(Document Document)
         {
             OutlineDocument(Document);
         }
         #endregion
 
+		/// <summary>
+		/// Use parser to create a CodeDocumentModel from the given document and hand it to the view
+		/// to display the outline.
+		/// </summary>
         private void OutlineDocument(Document document)
         {
             var reader = new StreamReader(document.Path + document.Name);
             var cdm = new CodeDocumentModel();
             cdm.DocumentName = document.Name;
             cdm.FullPath = document.Path;
-            _parser.Init();
-            _parser.Parse(reader, ref cdm);
+            m_parser.Init();
+            m_parser.Parse(reader, ref cdm);
 
-            _docOutline.OutlineDocument(cdm, document);
+            m_docOutline.OutlineDocument(cdm, document);
         }
     }
 }

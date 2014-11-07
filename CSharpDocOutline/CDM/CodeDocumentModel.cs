@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
+	/// <summary>
+	/// All supported modi to sort all code elements recursivly.
+	/// </summary>
 	public enum SortMode
 	{
 		LineNumber,
@@ -13,11 +16,17 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 		ElementKind,
 	}
 
+	/// <summary>
+	/// Datastructur to store document properties and code document element structure.
+	/// </summary>
     public class CodeDocumentModel
     {
         public string DocumentName { get; set; }
         public string FullPath { get; set; }
 
+		/// <summary>
+		/// First level of code elements. Walking through those trees will give you all other code elements of the document.
+		/// </summary>
         public List<ICodeDocumentElement> RootElements { get; private set; }
 
         public CodeDocumentModel()
@@ -26,6 +35,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
         }
 
 		#region Sort Hierarchie
+		/// <summary>
+		/// Sort the all code elements whith the same parent with the given sort mode.
+		/// </summary>
 		public void Sort(SortMode mode)
 		{
 			SortList(RootElements, mode);
@@ -36,6 +48,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			}
 		}
 
+		/// <summary>
+		/// Recusively sort children list of code elements.
+		/// </summary>
 		private void RecursivSort(ICodeDocumentElement element, SortMode mode)
 		{
 			SortList(element.Children, mode);
@@ -46,6 +61,9 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			}
 		}
 
+		/// <summary>
+		/// Sort a list of ICodeDocumentElement's with the given sort mode.
+		/// </summary>
 		private void SortList(List<ICodeDocumentElement> list, SortMode mode)
 		{
 			switch (mode)

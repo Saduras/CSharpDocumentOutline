@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace DavidSpeck.CSharpDocOutline.CDM
 {
+	/// <summary>
+	/// Parser for propertiers
+	/// </summary>
 	public class CEPropertyParser : ICEParser
 	{
 		public bool CheckPreCondition(string statement, CDMParser parser)
@@ -15,11 +18,10 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			// The '{' might be in the next line
 			// For now assume everything that wasn't parsed already might be a property
 			// A Property has atleast two words (type and name)
-			// TODO Improve property detection (statement detection?)
-			return ParserUtilities.GetWords(statement).Length > 0;
+			return ParserUtilities.GetWords(statement).Length > 0 && parser.CurrentParent != null && parser.CurrentParent.CanHaveMember;
 		}
 
-		public ICodeDocumentElement Parse(string statement, int lineNumber, CEKind parentKind)
+		public ICodeDocumentElement TryParse(string statement, int lineNumber, CEKind parentKind)
 		{
 			try
 			{
