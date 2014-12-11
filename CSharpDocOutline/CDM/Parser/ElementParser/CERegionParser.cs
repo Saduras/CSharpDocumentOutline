@@ -28,7 +28,7 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 
 				var region = new GenericCodeElement();
 				region.Kind = CEKind.Region;
-				region.CanHaveMember = false;
+				region.CanHaveMember = true;
 				region.AccessModifier = CEAccessModifier.None;
 				region.ElementType = "";
 
