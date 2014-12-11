@@ -110,11 +110,6 @@ namespace DavidSpeck.CSharpDocOutline.CDM
 			if (m_multiLineComment)
 				return;
 
-			if (lineNumber == 74)
-			{
-				var a = 1;
-			}
-
 			line = RemoveStrings(line);
 
 			// Now parse the line until the next '{' and ';'
